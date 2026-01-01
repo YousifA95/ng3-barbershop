@@ -34,7 +34,7 @@ export const SERVICES: Service[] = [
 ];
 
 export const GALLERY = [
-  { src: "/images/gallery-01.webp", alt: "Low fade with design detail" },
+  { src: "/images/gallery-01.webp", alt: "High fade with design detail" },
   { src: "/images/gallery-02.webp", alt: "Low fade with design detail" },
   { src: "/images/gallery-03.webp", alt: "Pompadour fade with beard" },
   { src: "/images/gallery-04.webp", alt: "Textured top with clean fade" },
