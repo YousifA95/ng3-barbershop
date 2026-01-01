@@ -3,15 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0a0a0a;
-  --fg: #f5f5f5;
-  --muted: #b6b6b6;
+  /* Core palette */
+  --bg: #0b0b0c;
+  --fg: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.70);
+  --muted-2: rgba(255, 255, 255, 0.58);
+
+  /* Surfaces + hairlines */
+  --surface: #111113;
+  --surface-2: rgba(255, 255, 255, 0.04);
+  --hairline: rgba(255, 255, 255, 0.08);
+
+  /* Accent */
   --gold: #d4af37;
   --gold-soft: rgba(212, 175, 55, 0.35);
+
+  /* Shadows / focus */
+  --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 3px rgba(212, 175, 55, 0.25);
 }
 
 html {
   scroll-behavior: smooth;
+  /* account for the sticky header when jumping to anchors */
+  scroll-padding-top: 92px;
 }
 
 html,
@@ -29,9 +44,20 @@ body {
 }
 
 ::selection {
-  background: rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.22);
 }
 
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 14px;
+}
+
+iframe {
+  border: 0;
+}
+
+/* Subtle film grain */
 .grain {
   position: relative;
 }
@@ -46,22 +72,20 @@ body {
   mix-blend-mode: overlay;
 }
 
-iframe {
-  border: 0;
-}
-
 /* Makes the hero image fade to transparent on left/right edges */
 .hero-side-fade {
-  -webkit-mask-image: linear-gradient(to right,
+  -webkit-mask-image: linear-gradient(
+    to right,
     transparent 0%,
-    black 25%,
-    black 75%,
+    black 24%,
+    black 76%,
     transparent 100%
   );
-  mask-image: linear-gradient(to right,
+  mask-image: linear-gradient(
+    to right,
     transparent 0%,
-    black 25%,
-    black 75%,
+    black 24%,
+    black 76%,
     transparent 100%
   );
 
@@ -71,3 +95,56 @@ iframe {
   mask-size: 100% 100%;
 }
 
+@layer components {
+  .hairline {
+    border: 1px solid var(--hairline);
+  }
+
+  .surface {
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+  }
+
+  .btn-primary {
+    @apply rounded-2xl px-5 py-3 text-center font-medium transition;
+    background: var(--gold);
+    color: #0b0b0c;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.96;
+  }
+
+  .btn-secondary {
+    @apply rounded-2xl px-5 py-3 text-center transition;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: rgba(212, 175, 55, 0.10);
+    color: var(--gold);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(212, 175, 55, 0.14);
+  }
+
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    height: 1px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms ease;
+    background: rgba(212, 175, 55, 0.60);
+  }
+
+  .link-underline:hover:after,
+  .link-underline:focus-visible:after {
+    transform: scaleX(1);
+  }
+}
