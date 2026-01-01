@@ -2,17 +2,25 @@
 
 import React, { useRef } from "react";
 
+type MagneticLinkProps = {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  strength?: number;
+  ariaLabel?: string; // allows ariaLabel="..." in page.tsx
+} & Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "href" | "className" | "children"
+>;
+
 export function MagneticLink({
   href,
   children,
   className = "",
   strength = 18,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  strength?: number;
-}) {
+  ariaLabel,
+  ...rest
+}: MagneticLinkProps) {
   const ref = useRef<HTMLAnchorElement | null>(null);
 
   function onMove(e: React.MouseEvent) {
@@ -38,7 +46,12 @@ export function MagneticLink({
       href={href}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={"inline-block transition-transform duration-200 will-change-transform " + className}
+      aria-label={ariaLabel}
+      className={
+        "inline-block transition-transform duration-200 will-change-transform " +
+        className
+      }
+      {...rest}
     >
       {children}
     </a>

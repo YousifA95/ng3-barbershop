@@ -8,9 +8,32 @@ function money(n: number) {
   }).format(n);
 }
 
+/**
+ * Heuristic fallback so this component still behaves sensibly even if the
+ * data isn't categorized yet.
+ */
+function inferCategory(name: string): "core" | "addon" {
+  const n = name.toLowerCase();
+  const addonHints = ["wax", "blade", "eyebrow", "dye", "line", "line-up", "line up"];
+  // Beard-only services are typically add-ons unless paired with haircut.
+  const beardOnly = n.includes("beard") && !n.includes("haircut");
+  if (beardOnly) return "addon";
+  if (addonHints.some((h) => n.includes(h))) return "addon";
+  return "core";
+}
+
 export function ServicesMenu({ services }: { services: Service[] }) {
-  const featured = services.filter((s) => s.featured);
-  const rest = services.filter((s) => !s.featured);
+  const normalized = services.map((s) => ({
+    ...s,
+    category: (s.category ?? inferCategory(s.name)) as "core" | "addon",
+  }));
+
+  const core = normalized.filter((s) => s.category === "core");
+  const addons = normalized.filter((s) => s.category === "addon");
+
+  // Featured only applies within core services (signature tier).
+  const signature = core.filter((s) => s.featured);
+  const coreRest = core.filter((s) => !s.featured);
 
   return (
     <SectionReveal>
@@ -27,52 +50,116 @@ export function ServicesMenu({ services }: { services: Service[] }) {
           </p>
 
           <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6">
-            <div className="text-white/60 text-xs tracking-[0.22em]">NOTE</div>
-            <div className="mt-2 text-white/80 text-sm">
-              Arrive 5 minutes early to preserve schedule precision.
+            <div className="text-white/60 text-xs tracking-[0.22em]">
+              APPOINTMENT POLICY
             </div>
-            <div className="mt-2 text-white/60 text-sm">
-              Booking and deposits will be enabled in the next phase.
+            <div className="mt-2 text-white/80 text-sm leading-relaxed">
+              Arrive 5 minutes early to preserve schedule precision.
             </div>
           </div>
         </div>
 
-        <div className="lg:col-span-8">
-          {/* Featured */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Core Services */}
           <div className="rounded-3xl border border-[color:var(--gold)]/18 bg-gradient-to-b from-[color:var(--gold)]/8 to-white/3 p-6 md:p-8">
-            <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-              SIGNATURE
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+                  CORE SERVICES
+                </div>
+                <div className="mt-2 text-white/70 text-sm">
+                  Built for consistency. Finished with restraint.
+                </div>
+              </div>
             </div>
 
-            <div className="mt-5 divide-y divide-white/10">
-              {featured.map((s) => (
-                <div key={s.name} className="py-5 flex items-center justify-between gap-6">
-                  <div>
-                    <div className="text-white/90 font-medium">{s.name}</div>
-                    <div className="mt-1 text-white/55 text-sm">{s.minutes} min</div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="hidden sm:block h-[1px] w-16 bg-[color:var(--gold)]/50" />
-                    <div className="text-[color:var(--gold)] font-semibold">
-                      {money(s.price)}
-                    </div>
-                  </div>
+            {/* Signature */}
+            {signature.length > 0 && (
+              <div className="mt-6">
+                <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+                  SIGNATURE
                 </div>
-              ))}
-            </div>
+
+                <div className="mt-4 divide-y divide-white/10">
+                  {signature.map((s) => (
+                    <div
+                      key={s.name}
+                      className="py-5 flex items-center justify-between gap-6"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-white/90 font-medium truncate">
+                          {s.name}
+                        </div>
+                        <div className="mt-1 text-white/55 text-sm">
+                          {s.minutes} min
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 shrink-0">
+                        <div className="hidden sm:block h-[1px] w-16 bg-[color:var(--gold)]/50" />
+                        <div className="text-[color:var(--gold)] font-semibold tabular-nums">
+                          {money(s.price)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Rest of Core */}
+            {coreRest.length > 0 && (
+              <div className={signature.length > 0 ? "mt-6" : "mt-2"}>
+                <div className="text-white/60 text-xs tracking-[0.30em]">
+                  STANDARD
+                </div>
+                <div className="mt-4 divide-y divide-white/10">
+                  {coreRest.map((s) => (
+                    <div
+                      key={s.name}
+                      className="py-5 flex items-center justify-between gap-6"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-white/85 truncate">{s.name}</div>
+                        <div className="mt-1 text-white/55 text-sm">
+                          {s.minutes} min
+                        </div>
+                      </div>
+
+                      <div className="text-white/85 font-medium tabular-nums shrink-0">
+                        {money(s.price)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Rest */}
-          <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-            <div className="text-white/60 text-xs tracking-[0.30em]">ADDITIONAL</div>
+          {/* Add-ons */}
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+            <div className="text-white/60 text-xs tracking-[0.30em]">
+              ADD-ONS
+            </div>
+            <div className="mt-2 text-white/70 text-sm">
+              Quick refinements that elevate the finish.
+            </div>
+
             <div className="mt-5 divide-y divide-white/10">
-              {rest.map((s) => (
-                <div key={s.name} className="py-5 flex items-center justify-between gap-6">
-                  <div>
-                    <div className="text-white/85">{s.name}</div>
-                    <div className="mt-1 text-white/55 text-sm">{s.minutes} min</div>
+              {addons.map((s) => (
+                <div
+                  key={s.name}
+                  className="py-5 flex items-center justify-between gap-6"
+                >
+                  <div className="min-w-0">
+                    <div className="text-white/85 truncate">{s.name}</div>
+                    <div className="mt-1 text-white/55 text-sm">
+                      {s.minutes} min
+                    </div>
                   </div>
-                  <div className="text-white/80 font-medium">{money(s.price)}</div>
+                  <div className="text-white/85 font-medium tabular-nums shrink-0">
+                    {money(s.price)}
+                  </div>
                 </div>
               ))}
             </div>

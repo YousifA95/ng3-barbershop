@@ -1,18 +1,49 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+
 import { SectionReveal } from "@/components/SectionReveal";
 import { RolexGalleryClient } from "@/components/RolexGalleryClient";
 import { ServicesMenu } from "@/components/ServicesMenu";
-import { GALLERY, SERVICES, SHOP } from "@/lib/site";
 import { MagneticLink } from "@/components/MagneticLink";
+import { GALLERY, SERVICES, SHOP } from "@/lib/site";
+import { BackToTop } from "@/components/BackToTop";
 
-export default function HomePage() {
-  const PHONE_TEL = `tel:${SHOP.phone.replace(/[^\d]/g, "")}`;
+export const metadata: Metadata = {
+  metadataBase: new URL(SHOP.url),
+  title: "NG3 Barbershop | Shelby Township, MI",
+  description:
+    "Premium cuts. Luxury finish. Calm, high-end grooming—clean fades, sharp line-ups, and consistently refined results.",
+  openGraph: {
+    title: "NG3 Barbershop",
+    description:
+      "Premium cuts. Luxury finish. Calm, high-end grooming—clean fades, sharp line-ups, and consistently refined results.",
+    url: SHOP.url,
+    siteName: "NG3 Barbershop",
+    images: [
+      {
+        url: "/images/hero.webp",
+        width: 1600,
+        height: 900,
+        alt: "NG3 Barbershop — premium grooming",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
 
-  const jsonLd = {
+function buildLocalBusinessJsonLd() {
+  return {
     "@context": "https://schema.org",
-    "@type": "Barbershop",
+    "@type": "LocalBusiness",
     name: SHOP.name,
+    url: SHOP.url,
     telephone: SHOP.phone,
+    image: [`${SHOP.url}/images/hero.webp`],
+    priceRange: "$$",
     address: {
       "@type": "PostalAddress",
       streetAddress: "45553 Mound Rd",
@@ -21,55 +52,60 @@ export default function HomePage() {
       postalCode: "48317",
       addressCountry: "US",
     },
-    url: "https://ng3barbershop.com",
-    sameAs: [SHOP.maps],
+    openingHours: [
+      "Tu 11:00-20:30",
+      "We 11:00-20:30",
+      "Th 11:00-20:30",
+      "Fr 11:00-20:30",
+      "Sa 11:00-20:30",
+      "Su 11:00-18:00",
+    ],
+    sameAs: [SHOP.instagram],
   };
+}
+
+export default function HomePage() {
+  const jsonLd = buildLocalBusinessJsonLd();
 
   return (
-    <main id="main" className="grain min-h-screen">
-      {/* LocalBusiness / SEO */}
+    <main className="grain min-h-screen">
+      {/* LocalBusiness structured data */}
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Skip link (keyboard accessibility) */}
-      <a
-        href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-5 focus:top-5 focus:z-[999] rounded-2xl bg-white/10 px-4 py-3 text-sm text-white"
-      >
-        Skip to content
-      </a>
-
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-black/40 backdrop-blur">
+      <header className="sticky top-0 z-50 backdrop-blur border-b border-white/5 bg-black/30">
         <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
-          <a href="#content" className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <Image
               src="/images/logo.webp"
-              alt="NG3 Barbershop logo"
-              width={44}
-              height={44}
-              className="rounded-xl border border-white/10 bg-black/40"
-              priority
+              alt="NG3 Barbershop"
+              width={38}
+              height={38}
+              className="rounded-xl border border-white/10 bg-black/30"
             />
             <div className="leading-tight">
-              <div className="font-[var(--font-heading)] tracking-[0.14em] text-sm">
-                NG3 BARBERSHOP
+              <div className="text-white/90 font-[var(--font-heading)] tracking-[0.06em]">
+                NG3
               </div>
-              <div className="text-white/55 text-xs">Shelby Township, MI</div>
+              <div className="text-white/55 text-xs tracking-[0.28em]">
+                BARBERSHOP
+              </div>
             </div>
-          </a>
+          </div>
 
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a className="link-underline hover:text-white transition" href="#services">
+            <a className="hover:text-white transition" href="#services">
               Services
             </a>
-            <a className="link-underline hover:text-white transition" href="#gallery">
+            <a className="hover:text-white transition" href="#gallery">
               Gallery
             </a>
-            <a className="link-underline hover:text-white transition" href="#location">
+            <a className="hover:text-white transition" href="#location">
               Location
             </a>
           </nav>
@@ -77,65 +113,47 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <a
               className="hidden sm:inline text-sm text-white/70 hover:text-white transition"
-              href={PHONE_TEL}
+              href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
             >
               {SHOP.phone}
             </a>
 
-            {/* Desktop CTA */}
             <MagneticLink
-              href="#book"
-              className="hidden sm:inline-flex px-4 py-2 rounded-xl border border-[color:var(--gold)]/35 text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10 transition"
+              href="#appointments"
+              className="btn btn-primary"
+              ariaLabel="Book now"
             >
               Book Now
             </MagneticLink>
 
-            {/* Mobile menu (no JS required) */}
-            <details className="md:hidden relative">
-              <summary className="list-none rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white/80 hover:text-white hover:border-white/20 transition cursor-pointer select-none [&::-webkit-details-marker]:hidden">
+            {/* Mobile menu (CSS-only, no JS) */}
+            <details className="md:hidden group relative">
+              <summary className="btn btn-secondary px-3 py-2 cursor-pointer list-none">
                 <span className="sr-only">Open menu</span>
-                <div className="flex flex-col gap-1">
-                  <span className="block h-[2px] w-5 bg-white/80" />
-                  <span className="block h-[2px] w-5 bg-white/60" />
-                  <span className="block h-[2px] w-5 bg-white/80" />
-                </div>
+                <span aria-hidden className="text-sm text-white/80">
+                  Menu
+                </span>
               </summary>
 
-              <div className="absolute right-0 mt-3 w-[260px] overflow-hidden rounded-2xl border border-white/10 bg-black/85 backdrop-blur shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
-                <div className="p-3">
+              <div className="absolute right-0 mt-3 w-[min(86vw,320px)] rounded-2xl border border-white/10 bg-[#0b0b0c]/95 backdrop-blur p-2 shadow-[0_18px_55px_rgba(0,0,0,0.6)]">
+                <a className="menu-item" href="#services">
+                  Services
+                </a>
+                <a className="menu-item" href="#gallery">
+                  Gallery
+                </a>
+                <a className="menu-item" href="#location">
+                  Location
+                </a>
+                <div className="mt-2 grid grid-cols-2 gap-2">
                   <a
-                    className="block rounded-xl px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 transition"
-                    href="#services"
+                    className="btn btn-secondary w-full justify-center"
+                    href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
                   >
-                    Services
+                    Call
                   </a>
-                  <a
-                    className="block rounded-xl px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 transition"
-                    href="#gallery"
-                  >
-                    Gallery
-                  </a>
-                  <a
-                    className="block rounded-xl px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 transition"
-                    href="#location"
-                  >
-                    Location
-                  </a>
-
-                  <div className="my-2 h-px bg-white/10" />
-
-                  <a
-                    className="block rounded-xl px-4 py-3 text-sm text-white/90 hover:bg-white/5 transition"
-                    href={PHONE_TEL}
-                  >
-                    Call {SHOP.phone}
-                  </a>
-
-                  <a
-                    className="mt-2 block rounded-xl px-4 py-3 text-sm text-black font-medium bg-[color:var(--gold)] hover:opacity-95 transition text-center"
-                    href="#book"
-                  >
-                    Book Now
+                  <a className="btn btn-primary w-full justify-center" href="#appointments">
+                    Book
                   </a>
                 </div>
               </div>
@@ -144,203 +162,275 @@ export default function HomePage() {
         </div>
       </header>
 
-      <div id="content">
-        {/* HERO */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-[#0b0b0c]">
-            <div className="absolute inset-0 hero-side-fade">
-              <Image
-                src="/images/hero.webp"
-                alt="NG3 Barbershop — premium grooming"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover object-[55%_35%]"
-              />
+      {/* Hero */}
+      <section id="hero" className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[#0a0a0a]">
+          <div className="absolute inset-0 hero-side-fade">
+            <Image
+              src="/images/hero.webp"
+              alt="NG3 Barbershop — premium grooming"
+              fill
+              priority
+              className="object-cover object-[55%_35%]"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black" />
+          <div className="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[color:var(--gold)]/10 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-5 pt-20 pb-14 md:pt-28 md:pb-20">
+          <SectionReveal>
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
+              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" />
+              Precision. Consistency. Restraint.
             </div>
 
-            {/* Editorial overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black" />
-            <div className="absolute inset-0 bg-[radial-gradient(800px_circle_at_20%_15%,rgba(212,175,55,0.10),transparent_52%)]" />
-          </div>
+            <h1 className="mt-6 font-[var(--font-heading)] text-4xl md:text-6xl leading-[1.05] text-white">
+              Premium cuts.{" "}
+              <span className="text-white/85">Luxury finish.</span>
+            </h1>
 
-          <div className="relative mx-auto max-w-6xl px-5 pt-20 pb-14 md:pt-28 md:pb-20">
-            <SectionReveal>
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
-                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" />
-                Precision. Consistency. Restraint.
-              </div>
+            <p className="mt-5 max-w-2xl text-white/70 leading-relaxed">
+              Calm, high-end grooming—clean fades, sharp line-ups, and
+              consistently refined results.
+            </p>
 
-              <h1 className="mt-6 font-[var(--font-heading)] text-4xl md:text-6xl leading-[1.03] tracking-tight">
-                Premium cuts.
-                <span className="text-[color:var(--gold)]"> Luxury</span> finish.
-              </h1>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <MagneticLink
+                href="#appointments"
+                className="btn btn-primary"
+                ariaLabel="Book appointment"
+              >
+                Book Appointment
+              </MagneticLink>
 
-              <p className="mt-5 max-w-2xl text-white/70 text-base md:text-lg leading-relaxed">
-                Calm, high-end grooming—clean fades, sharp line-ups, and consistently refined results.
-              </p>
+              <MagneticLink
+                href={SHOP.maps}
+                className="btn btn-secondary"
+                ariaLabel="Get directions"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Get Directions
+              </MagneticLink>
+            </div>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <MagneticLink href="#book" className="btn-primary">
-                  Book Appointment
-                </MagneticLink>
-
-                <a href="#location" className="btn-secondary">
-                  Get Directions
-                </a>
-              </div>
-
-              <div className="mt-5 text-sm text-white/55">
-                Walk-ins welcome • Appointments recommended
-              </div>
-            </SectionReveal>
-          </div>
-        </section>
-
-        {/* SERVICES */}
-        <section id="services" className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-          <ServicesMenu services={SERVICES} />
-        </section>
-
-        {/* GALLERY */}
-        <section id="gallery" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
-          <RolexGalleryClient items={GALLERY} />
-        </section>
-
-        {/* BOOKING */}
-        <section id="book" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
-          <SectionReveal>
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/6 to-white/3 p-8 md:p-12">
-              <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-                APPOINTMENTS
-              </div>
-              <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
-                Book an appointment
-              </h2>
-              <p className="mt-3 text-white/70 max-w-2xl">
-                Reserve your slot by phone. If you have a specific style in mind, mention it when you call.
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a href={PHONE_TEL} className="btn-primary">
-                  Call to Book
-                </a>
-
-                <a
-                  className="px-5 py-3 rounded-2xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 transition text-center"
-                  href="#services"
-                >
-                  View Services
-                </a>
-              </div>
-
-              <div className="mt-5 text-sm text-white/55">
-                Please arrive a few minutes early for the smoothest experience.
-              </div>
+            <div className="mt-6 text-sm text-white/65">
+              Licensed • Clean tools • Consistent results
             </div>
           </SectionReveal>
-        </section>
+        </div>
+      </section>
 
-        {/* LOCATION */}
-        <section id="location" className="mx-auto max-w-6xl px-5 pb-20 md:pb-28">
-          <SectionReveal>
-            <div className="flex items-end justify-between gap-6">
-              <div>
-                <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-                  VISIT
-                </div>
-                <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
-                  Visit NG3
-                </h2>
-                <p className="mt-3 max-w-2xl text-white/70">
-                  Convenient location, clear hours, and a straightforward booking process.
-                </p>
+      {/* SERVICES */}
+      <section id="services" className="mx-auto max-w-6xl px-5 py-16 md:py-24">
+        <ServicesMenu services={SERVICES} />
+      </section>
+
+      {/* GALLERY */}
+      <section id="gallery" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
+        <SectionReveal>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-end">
+            <div className="md:col-span-5">
+              <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+                LOOKBOOK
               </div>
-              <div className="hidden md:block text-right text-white/50 text-sm">
+              <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
+                Gallery
+              </h2>
+              <p className="mt-3 text-white/70 leading-relaxed">
+                Precision fades, clean line work, and a premium finish—captured
+                with restraint.
+              </p>
+            </div>
+            <div className="md:col-span-7 md:text-right">
+              <div className="text-white/60 text-sm">Click to view</div>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <RolexGalleryClient items={GALLERY} />
+          </div>
+        </SectionReveal>
+      </section>
+
+      {/* APPOINTMENTS */}
+      <section id="appointments" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
+        <SectionReveal>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-10">
+            <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+              APPOINTMENTS
+            </div>
+            <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
+              Book an appointment
+            </h2>
+            <p className="mt-3 text-white/70 leading-relaxed max-w-2xl">
+              Reserve your slot by phone. If you have a specific style in mind,
+              mention it when you call.
+            </p>
+
+            <div className="mt-7 flex flex-col sm:flex-row gap-3">
+              <MagneticLink
+                href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
+                className="btn btn-primary"
+                ariaLabel="Call to book"
+              >
+                Call to Book
+              </MagneticLink>
+              <MagneticLink
+                href="#services"
+                className="btn btn-secondary"
+                ariaLabel="View services"
+              >
+                View Services
+              </MagneticLink>
+            </div>
+
+            <div className="mt-6 text-sm text-white/65">
+              Please arrive a few minutes early for the smoothest experience.
+            </div>
+          </div>
+        </SectionReveal>
+      </section>
+
+      {/* LOCATION */}
+      <section id="location" className="mx-auto max-w-6xl px-5 pb-20 md:pb-28">
+        <SectionReveal>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+            <div className="md:col-span-5">
+              <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+                VISIT
+              </div>
+              <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
+                Visit NG3
+              </h2>
+              <p className="mt-3 text-white/70 leading-relaxed">
+                Convenient location, clear hours, and a straightforward booking
+                process.
+              </p>
+
+              <div className="mt-6 text-sm text-white/60">
                 Tap “Open in Maps” for directions
               </div>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-7">
-                <div className="text-white/60 text-xs tracking-[0.22em]">ADDRESS</div>
-                <div className="mt-2 text-lg">{SHOP.address}</div>
-
-                <div className="mt-6 text-white/60 text-xs tracking-[0.22em]">HOURS</div>
-                <div className="mt-3 space-y-2 text-white/75">
-                  {SHOP.hours.map(([day, hours]) => (
-                    <div key={day} className="flex justify-between gap-6">
-                      <span>{day}</span>
-                      <span className="text-white/60">{hours}</span>
-                    </div>
-                  ))}
+            <div className="md:col-span-7 rounded-3xl border border-white/10 bg-white/5 p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                <div>
+                  <div className="text-white/60 text-xs tracking-[0.30em]">
+                    ADDRESS
+                  </div>
+                  <div className="mt-3 text-white/85">{SHOP.address}</div>
                 </div>
 
-                <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                  <a
-                    className="btn-secondary"
-                    href={SHOP.maps}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Open in Maps
-                  </a>
-                  <a
-                    className="px-5 py-3 rounded-2xl border border-white/15 text-white/80 hover:text-white hover:border-white/30 transition text-center"
-                    href={PHONE_TEL}
-                  >
-                    Call {SHOP.phone}
-                  </a>
-                </div>
-
-                <div className="mt-6 text-sm text-white/55">
-                  Parking available nearby • Walk-ins welcome
+                <div>
+                  <div className="text-white/60 text-xs tracking-[0.30em]">
+                    HOURS
+                  </div>
+                  <div className="mt-3 space-y-2 text-white/80 text-sm">
+                    {SHOP.hours.map(([day, hours]) => (
+                      <div key={day} className="flex items-center justify-between gap-4">
+                        <span className="text-white/70">{day}</span>
+                        <span className="tabular-nums">{hours}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-                {/* Luxury overlay hairline + soft vignette */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/20" />
-                <div className="pointer-events-none absolute inset-0 ring-1 ring-[color:var(--gold)]/15" />
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <MagneticLink
+                  href={SHOP.maps}
+                  className="btn btn-secondary"
+                  ariaLabel="Open in maps"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Open in Maps
+                </MagneticLink>
+                <MagneticLink
+                  href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
+                  className="btn btn-primary"
+                  ariaLabel="Call"
+                >
+                  Call {SHOP.phone}
+                </MagneticLink>
+              </div>
 
-                <div className="relative h-[420px]">
-                  <iframe
-                    title="NG3 Barbershop — Map"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2935.5365413349687!2d-83.05580512272327!3d42.62878421808017!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8824dd862446df3f%3A0x1d39a558937dca23!2sNG3!5e0!3m2!1sen!2sus!4v1767235218345!5m2!1sen!2sus"
-                    className="h-full w-full"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    allowFullScreen
-                  />
-                </div>
-
-                {/* Bottom action bar */}
-                <div className="flex items-center justify-between gap-4 border-t border-white/10 bg-black/35 px-6 py-4">
-                  <div className="text-white/70 text-sm">{SHOP.address}</div>
-
-                  <a
-                    href={SHOP.maps}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-xl border border-[color:var(--gold)]/35 bg-[color:var(--gold)]/10 px-4 py-2 text-sm text-[color:var(--gold)] hover:bg-[color:var(--gold)]/15 transition"
-                  >
-                    Open in Maps
-                  </a>
-                </div>
+              <div className="mt-6 text-sm text-white/65">
+                Parking available nearby • Walk-ins welcome
               </div>
             </div>
-          </SectionReveal>
-        </section>
-
-        <footer className="border-t border-white/5">
-          <div className="mx-auto max-w-6xl px-5 py-10 text-white/60 text-sm flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-            <div>
-              <span className="text-white/70">{SHOP.name}</span> · Shelby Township, MI
-            </div>
-            <div>© {new Date().getFullYear()} NG3. All rights reserved.</div>
           </div>
+        </SectionReveal>
+
+        <footer className="mt-16 border-t border-white/5 pt-10 text-center text-sm text-white/55">
+          <div className="text-white/70 font-[var(--font-heading)] tracking-[0.08em]">
+            NG3 Barbershop · Shelby Township, MI
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-3">
+            {/* Instagram */}
+            <a
+              href={SHOP.instagram}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="NG3 Barbershop on Instagram"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:border-[color:var(--gold)]/35 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                aria-hidden="true"
+                fill="none"
+              >
+                <path
+                  d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+                <path
+                  d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+                <path
+                  d="M17.5 6.5h.01"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </a>
+
+            {/* Facebook */}
+            <a
+              href={SHOP.facebook}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="NG3 Barbershop on Facebook"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:border-[color:var(--gold)]/35 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                aria-hidden="true"
+                fill="none"
+              >
+                <path
+                  d="M14 8.5V7.3c0-.9.6-1.3 1.3-1.3H17V3h-2.2C12.8 3 12 4.4 12 6.8V8.5H10v3h2V21h3v-9.5h2.2l.8-3H15Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <div className="mt-4">© {new Date().getFullYear()} NG3. All rights reserved.</div>
         </footer>
-      </div>
+      </section>
+      <BackToTop heroId="hero" />
     </main>
   );
 }

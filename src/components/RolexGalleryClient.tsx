@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import type React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "@/components/SectionReveal";
 
 function ChevronLeft({ className = "" }: { className?: string }) {
@@ -37,158 +37,99 @@ function ChevronRight({ className = "" }: { className?: string }) {
 type Item = { src: string; alt: string };
 
 export function RolexGalleryClient({ items }: { items: Item[] }) {
-  const curated = useMemo(() => items, [items]); // keep it curated
+  const curated = useMemo(() => items, [items]); // keep it Rolex-curated
   const featured = curated[0];
   const rest = curated.slice(1, 9);
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Ensures portals only run in the browser (avoids SSR "document is not defined")
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isOpen = openIndex !== null;
   const current = openIndex !== null ? curated[openIndex] : null;
 
-  const reduceMotion = useReducedMotion();
-
-  const dialogRef = useRef<HTMLDivElement | null>(null);
-  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
-  const prevBtnRef = useRef<HTMLButtonElement | null>(null);
-  const nextBtnRef = useRef<HTMLButtonElement | null>(null);
-  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
-
-  const open = useCallback((i: number) => {
+  function open(i: number) {
     setOpenIndex(i);
-  }, []);
+  }
 
-  const close = useCallback(() => {
+  function close() {
     setOpenIndex(null);
-  }, []);
+  }
 
-  const next = useCallback(() => {
-    setOpenIndex((idx) => {
-      if (idx === null) return idx;
-      return (idx + 1) % curated.length;
+  function next() {
+    setOpenIndex((i) => {
+      if (i === null) return null;
+      return (i + 1) % curated.length;
     });
-  }, [curated.length]);
+  }
 
-  const prev = useCallback(() => {
-    setOpenIndex((idx) => {
-      if (idx === null) return idx;
-      return (idx - 1 + curated.length) % curated.length;
+  function prev() {
+    setOpenIndex((i) => {
+      if (i === null) return null;
+      return (i - 1 + curated.length) % curated.length;
     });
-  }, [curated.length]);
+  }
 
-  // Keyboard controls + scroll lock + basic focus management
+  // Keyboard controls + prevent background scroll while open
   useEffect(() => {
     if (!isOpen) return;
 
-    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    // focus the close button after paint
-    const t = window.setTimeout(() => closeBtnRef.current?.focus(), 0);
-
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        close();
-        return;
-      }
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        next();
-        return;
-      }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prev();
-        return;
-      }
-
-      // Trap focus within dialog
-      if (e.key === "Tab") {
-        const root = dialogRef.current;
-        if (!root) return;
-
-        const focusables = Array.from(
-          root.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          )
-        ).filter((el) => !el.hasAttribute("disabled") && el.tabIndex !== -1);
-
-        if (focusables.length === 0) return;
-
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        const active = document.activeElement as HTMLElement | null;
-
-        if (!e.shiftKey && active === last) {
-          e.preventDefault();
-          first.focus();
-        } else if (e.shiftKey && active === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      }
+      if (e.key === "Escape") { e.preventDefault(); close(); }
+      if (e.key === "ArrowRight") { e.preventDefault(); next(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
     };
 
     window.addEventListener("keydown", onKeyDown);
 
-    return () => {
-      window.clearTimeout(t);
-      window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = originalOverflow;
-      previouslyFocusedRef.current?.focus?.();
+    // Scroll-lock that DOES NOT jump the page:
+    // - overflow:hidden alone can cause scroll jumps (esp. iOS Safari)
+    // - this preserves the current scroll position by fixing the body
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const html = document.documentElement;
+    const prevHtmlScrollBehavior = html.style.scrollBehavior;
+
+    const prevBodyStyles = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
     };
-  }, [isOpen, close, next, prev]);
 
-  // Swipe support (mobile)
-  const swipeRef = useRef<{ x: number; y: number; t: number } | null>(null);
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-    swipeRef.current = { x: touch.clientX, y: touch.clientY, t: Date.now() };
-  };
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
 
-  const onTouchEnd = (e: React.TouchEvent) => {
-    const start = swipeRef.current;
-    swipeRef.current = null;
-    if (!start) return;
+      body.style.position = prevBodyStyles.position;
+      body.style.top = prevBodyStyles.top;
+      body.style.left = prevBodyStyles.left;
+      body.style.right = prevBodyStyles.right;
+      body.style.width = prevBodyStyles.width;
+      body.style.overflow = prevBodyStyles.overflow;
 
-    const touch = e.changedTouches[0];
-    if (!touch) return;
-
-    const dx = touch.clientX - start.x;
-    const dy = touch.clientY - start.y;
-    const dt = Date.now() - start.t;
-
-    // horizontal swipe: quick + mostly horizontal
-    if (dt < 600 && Math.abs(dx) > 45 && Math.abs(dy) < 60) {
-      if (dx < 0) next();
-      else prev();
-    }
-  };
+      // Prevent smooth-scroll CSS from animating the restoration.
+      html.style.scrollBehavior = "auto";
+      window.scrollTo(0, scrollY);
+      html.style.scrollBehavior = prevHtmlScrollBehavior;
+    };
+  }, [isOpen]);
 
   return (
     <>
       <SectionReveal>
-        <div className="flex items-end justify-between gap-6">
-          <div>
-            <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-              LOOKBOOK
-            </div>
-            <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
-              Gallery
-            </h2>
-            <p className="mt-3 max-w-2xl text-white/70">
-              Precision fades, clean line work, and a premium finish—captured with restraint.
-            </p>
-          </div>
-          <div className="hidden md:block text-right text-white/50 text-sm">
-            Click to view
-          </div>
-        </div>
-
         <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Featured */}
           <button
@@ -197,16 +138,16 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
             className="lg:col-span-7 text-left self-start w-full"
             aria-label="Open featured image"
           >
-            <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5">
               <div className="relative h-[460px] md:h-[560px]">
                 <Image
                   src={featured.src}
                   alt={featured.alt}
                   fill
                   sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
+                  className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0" />
               </div>
 
               <div className="flex items-center justify-between gap-4 px-6 py-5">
@@ -239,7 +180,7 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
                         sizes="(max-width: 1024px) 50vw, 25vw"
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0 opacity-75" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0 opacity-70" />
                     </div>
 
                     <div className="absolute left-5 right-5 bottom-5 flex items-center justify-between">
@@ -257,130 +198,127 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
               </div>
               <div className="mt-2 text-white/80">Fewer images. Higher confidence.</div>
               <div className="mt-2 text-white/60 text-sm">
-                Tip: Use Arrow keys or swipe to navigate when open.
+                Use Arrow keys to navigate when open.
               </div>
             </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* LIGHTBOX MODAL */}
-      <AnimatePresence>
-        {isOpen && current && (
-          <motion.div
-            ref={dialogRef}
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm"
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={reduceMotion ? { opacity: 1 } : { opacity: 1 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0 }}
-            // Close on backdrop click
-            onClick={() => close()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Gallery viewer"
-          >
-            <div className="absolute inset-x-0 top-0 p-5 flex items-center justify-between">
-              <div className="text-white/60 text-xs tracking-[0.22em]" aria-live="polite">
-                {openIndex! + 1} / {curated.length}
-              </div>
-
-              <button
-                ref={closeBtnRef}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  close();
-                }}
-                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-white/80 hover:text-white hover:border-white/30 transition"
+      {/* LIGHTBOX MODAL (portaled to <body> so position:fixed isn't trapped by parent transforms) */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isOpen && current && (
+              <motion.div
+                className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                // IMPORTANT: close on any click on the backdrop.
+                onClick={() => close()}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Gallery viewer"
               >
-                Close
-              </button>
-            </div>
+                <div className="absolute inset-x-0 top-0 p-5 flex items-center justify-between">
+                  <div className="text-white/60 text-xs tracking-[0.22em]">
+                    {openIndex! + 1} / {curated.length}
+                  </div>
 
-            <div className="h-full w-full flex items-center justify-center px-5 pb-14 pt-16">
-              <div
-                className="w-full max-w-5xl"
-                onClick={(e) => e.stopPropagation()} // clicking inside viewer should NOT close
-                onTouchStart={onTouchStart}
-                onTouchEnd={onTouchEnd}
-              >
-                <div className="relative overflow-hidden rounded-3xl border border-white/12 bg-black group">
-                  {/* Image area */}
-                  <div className="relative aspect-[16/10]">
-                    <Image
-                      src={current.src}
-                      alt={current.alt}
-                      fill
-                      sizes="100vw"
-                      className="object-contain"
-                      priority
-                    />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      close();
+                    }}
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-white/80 hover:text-white hover:border-white/30 transition"
+                  >
+                    Close
+                  </button>
+                </div>
 
-                    {/* Luxury edge fades */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/35 to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/35 to-transparent" />
+                <div className="h-full w-full flex items-center justify-center px-5 pb-14 pt-16">
+                  <div
+                    className="w-full max-w-5xl"
+                    onClick={(e) => e.stopPropagation()} // clicking inside viewer should NOT close
+                  >
+                    <div className="relative overflow-hidden rounded-3xl border border-white/12 bg-black group">
+                      {/* Image area */}
+                      <div className="relative aspect-[16/10]">
+                        <Image
+                          src={current.src}
+                          alt={current.alt}
+                          fill
+                          sizes="100vw"
+                          className="object-contain"
+                          priority
+                        />
 
-                    {/* LEFT CLICK ZONE */}
-                    <button
-                      ref={prevBtnRef}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        prev();
-                      }}
-                      className="group/zone absolute left-0 top-0 h-full w-1/4 flex items-center justify-start px-4 md:px-6"
-                      aria-label="Previous image"
-                    >
-                      <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover/zone:opacity-100">
-                        <span className="absolute inset-0 bg-gradient-to-r from-white/[0.06] via-white/[0.03] to-transparent" />
-                        <span className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/10" />
-                      </span>
+                        {/* Luxury edge fades */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/35 to-transparent" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/35 to-transparent" />
 
-                      <ChevronLeft className="relative z-10 h-8 w-8 text-white/70 opacity-80 transition-opacity duration-200 group-hover/zone:opacity-100 drop-shadow-[0_6px_18px_rgba(0,0,0,0.55)]" />
-                    </button>
+                        {/* LEFT CLICK ZONE: left quarter, full height */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            prev();
+                          }}
+                          className="group/zone absolute left-0 top-0 h-full w-1/4 flex items-center justify-start px-4 md:px-6"
+                          aria-label="Previous image"
+                        >
+                          {/* Hover spotlight */}
+                          <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover/zone:opacity-100">
+                            <span className="absolute inset-0 bg-gradient-to-r from-white/[0.06] via-white/[0.03] to-transparent" />
+                            <span className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/10" />
+                          </span>
 
-                    {/* RIGHT CLICK ZONE */}
-                    <button
-                      ref={nextBtnRef}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        next();
-                      }}
-                      className="group/zone absolute right-0 top-0 h-full w-1/4 flex items-center justify-end px-4 md:px-6"
-                      aria-label="Next image"
-                    >
-                      <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover/zone:opacity-100">
-                        <span className="absolute inset-0 bg-gradient-to-l from-white/[0.06] via-white/[0.03] to-transparent" />
-                        <span className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/10" />
-                      </span>
+                          <ChevronLeft className="relative z-10 h-8 w-8 text-white/70 opacity-80 transition-opacity duration-200 group-hover/zone:opacity-100 drop-shadow-[0_6px_18px_rgba(0,0,0,0.55)]" />
+                        </button>
 
-                      <ChevronRight className="relative z-10 h-8 w-8 text-white/70 opacity-80 transition-opacity duration-200 group-hover/zone:opacity-100 drop-shadow-[0_6px_18px_rgba(0,0,0,0.55)]" />
-                    </button>
+                        {/* RIGHT CLICK ZONE: right quarter, full height */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            next();
+                          }}
+                          className="group/zone absolute right-0 top-0 h-full w-1/4 flex items-center justify-end px-4 md:px-6"
+                          aria-label="Next image"
+                        >
+                          {/* Hover spotlight */}
+                          <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover/zone:opacity-100">
+                            <span className="absolute inset-0 bg-gradient-to-l from-white/[0.06] via-white/[0.03] to-transparent" />
+                            <span className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/10" />
+                          </span>
 
-                    {/* Subtle cursor hint */}
-                    <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-white/[0.03] to-transparent" />
-                      <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-white/[0.03] to-transparent" />
+                          <ChevronRight className="relative z-10 h-8 w-8 text-white/70 opacity-80 transition-opacity duration-200 group-hover/zone:opacity-100 drop-shadow-[0_6px_18px_rgba(0,0,0,0.55)]" />
+                        </button>
+
+                        {/* Optional: cursor hint (subtle, premium) */}
+                        <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-white/[0.03] to-transparent" />
+                          <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-white/[0.03] to-transparent" />
+                        </div>
+                      </div>
+
+                      {/* Caption bar */}
+                      <div className="flex items-center justify-between gap-6 px-6 py-5 border-t border-white/10 bg-black/40">
+                        <div className="text-white/80 text-sm">{current.alt}</div>
+                        <div className="hidden sm:block h-[1px] w-24 bg-[color:var(--gold)]/45" />
+                      </div>
                     </div>
                   </div>
-
-                  {/* Caption bar */}
-                  <div className="flex items-center justify-between gap-6 px-6 py-5 border-t border-white/10 bg-black/40">
-                    <div className="text-white/80 text-sm">{current.alt}</div>
-                    <div className="hidden sm:block h-[1px] w-24 bg-[color:var(--gold)]/45" />
-                  </div>
                 </div>
-
-                {/* Small accessibility hint for touch devices */}
-                <div className="mt-4 text-center text-xs text-white/50">
-                  Swipe left/right or use Arrow keys. Press Esc to close.
-                </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   );
 }
