@@ -120,7 +120,7 @@ export default function HomePage() {
 
             <MagneticLink
               href="#appointments"
-              className="btn btn-primary"
+              className="btn btn-primary px-3 py-2 text-sm md:px-5 md:py-3 md:text-base"
               ariaLabel="Book now"
             >
               Book Now
