@@ -1,4 +1,5 @@
 import "./globals.css";
+import Providers from "./providers";
 import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${heading.variable} ${body.variable}`}>
       <body>
-        {children}
+        <Providers>{children}</Providers>
         {comingSoon && <ComingSoonOverlay />}
       </body>
     </html>
