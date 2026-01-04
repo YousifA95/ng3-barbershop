@@ -3,16 +3,6 @@
 import Script from "next/script";
 import React, { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (el: HTMLElement, opts: any) => string | number;
-      remove: (id: string | number) => void;
-      reset: (id?: string | number) => void;
-    };
-  }
-}
-
 export default function TurnstileBox({
   onToken,
 }: {
@@ -51,9 +41,11 @@ export default function TurnstileBox({
 
     return () => {
       window.clearInterval(t);
+
       if (window.turnstile && widgetIdRef.current != null) {
-        window.turnstile.remove(widgetIdRef.current);
+        window.turnstile.remove?.(widgetIdRef.current);
       }
+
       widgetIdRef.current = null;
       onToken(""); // clear token on unmount
     };

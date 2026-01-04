@@ -1,81 +1,60 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Script from "next/script";
+import React, { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (
-        el: HTMLElement,
-        opts: {
-          sitekey: string;
-          callback: (token: string) => void;
-          "expired-callback"?: () => void;
-          "error-callback"?: () => void;
-          theme?: "light" | "dark" | "auto";
-        }
-      ) => string;
-      reset: (widgetId: string) => void;
-    };
-  }
-}
-
-export function TurnstileWidget({
-  siteKey,
+export default function TurnstileWidget({
+  sitekey,
   onToken,
+  className = "",
 }: {
-  siteKey: string;
+  sitekey: string;
   onToken: (token: string) => void;
+  className?: string;
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
-  const widgetIdRef = useRef<string | null>(null);
+  const widgetIdRef = useRef<string | number | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!siteKey) return;
+    const el = hostRef.current;
+    if (!el) return;
 
-    const existing = document.querySelector('script[data-turnstile="1"]');
-    if (!existing) {
-      const s = document.createElement("script");
-      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      s.async = true;
-      s.defer = true;
-      s.dataset.turnstile = "1";
-      document.head.appendChild(s);
-    }
+    const tryRender = () => {
+      if (!window.turnstile) return;
+      if (widgetIdRef.current != null) return; // already rendered
 
-    const wait = () => {
-      if (!hostRef.current) return;
-      if (!window.turnstile) {
-        requestAnimationFrame(wait);
-        return;
-      }
-      if (widgetIdRef.current) return;
-
-      widgetIdRef.current = window.turnstile.render(hostRef.current, {
-        sitekey: siteKey,
-        theme: "dark",
-        callback: onToken,
+      widgetIdRef.current = window.turnstile.render(el, {
+        sitekey,
+        callback: (token: string) => onToken(token),
         "expired-callback": () => onToken(""),
         "error-callback": () => onToken(""),
       });
     };
 
-    wait();
+    // Try immediately, then poll briefly until script loads
+    tryRender();
+    intervalRef.current = window.setInterval(tryRender, 50);
 
     return () => {
-      // Turnstile has no reliable destroy; resetting is enough for our form flow.
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.reset(widgetIdRef.current);
+      if (intervalRef.current != null) window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
+
+      if (window.turnstile && widgetIdRef.current != null) {
+        // remove is optional in our type
+        window.turnstile.remove?.(widgetIdRef.current);
       }
+      widgetIdRef.current = null;
     };
-  }, [siteKey, onToken]);
+  }, [sitekey, onToken]);
 
   return (
-    <div className="mt-6">
-      <div ref={hostRef} />
-      <div className="mt-2 text-xs text-white/50">
-        Protected by Turnstile.
-      </div>
-    </div>
+    <>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        strategy="afterInteractive"
+      />
+      <div ref={hostRef} className={className} />
+    </>
   );
 }
