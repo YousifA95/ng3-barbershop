@@ -119,7 +119,7 @@ export default function HomePage() {
             </a>
 
             <MagneticLink
-              href="#appointments"
+              href="/book"
               className="btn btn-primary px-3 py-2 text-sm md:px-5 md:py-3 md:text-base"
               ariaLabel="Book now"
             >
@@ -197,7 +197,7 @@ export default function HomePage() {
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <MagneticLink
-                href="#appointments"
+                href="/book"
                 className="btn btn-primary"
                 ariaLabel="Book appointment"
               >
@@ -264,19 +264,29 @@ export default function HomePage() {
             <h2 className="mt-3 font-[var(--font-heading)] text-3xl md:text-4xl">
               Book an appointment
             </h2>
+
             <p className="mt-3 text-white/70 leading-relaxed max-w-2xl">
-              Reserve your slot by phone. If you have a specific style in mind,
+              Request your slot online, or reserve by phone. If you have a specific style in mind,
               mention it when you call.
             </p>
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <MagneticLink
-                href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
+                href="/book"
                 className="btn btn-primary"
+                ariaLabel="Book online"
+              >
+                Book Online
+              </MagneticLink>
+
+              <MagneticLink
+                href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
+                className="btn btn-secondary"
                 ariaLabel="Call to book"
               >
                 Call to Book
               </MagneticLink>
+
               <MagneticLink
                 href="#services"
                 className="btn btn-secondary"

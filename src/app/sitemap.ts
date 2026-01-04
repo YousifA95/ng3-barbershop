@@ -2,15 +2,17 @@ import type { MetadataRoute } from "next";
 import { SHOP } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const baseUrl = SHOP.url;
 
-  // Single-page site: keep sitemap minimal and accurate.
-  return [
-    {
-      url: SHOP.url,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
+  const routes = [
+    "",
+    "/book",
   ];
+
+  return routes.map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: path === "" ? 1 : 0.7,
+  }));
 }

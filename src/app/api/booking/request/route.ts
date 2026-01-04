@@ -9,7 +9,7 @@ async function verifyTurnstile(token: string) {
   form.set("secret", secret);
   form.set("response", token);
 
-  // Server-side validation is mandatory. :contentReference[oaicite:2]{index=2}
+  // Server-side validation is mandatory.
   const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
@@ -35,24 +35,49 @@ export async function POST(req: Request) {
   };
 
   const svc = SERVICES.find((s) => s.name === serviceName);
-  const barber = BARBERS.find((b) => b.id === barberId);
-  const safeName = cleanName(name);
-  const phoneParsed = normalizeUSPhone(phone);
+  if (!svc) {
+    return NextResponse.json({ ok: false, error: "Please select a valid service." }, { status: 400 });
+  }
 
-  if (!svc || !barber || !safeName || !phoneParsed || !date || !time) {
-    return NextResponse.json({ ok: false, error: "Invalid input" }, { status: 400 });
+  const barber = BARBERS.find((b) => b.id === barberId);
+  if (!barber) {
+    return NextResponse.json({ ok: false, error: "Please select a valid barber." }, { status: 400 });
+  }
+
+  if (!date || !time) {
+    return NextResponse.json({ ok: false, error: "Please choose a date and time." }, { status: 400 });
   }
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) {
     return NextResponse.json({ ok: false, error: "Invalid date/time" }, { status: 400 });
   }
 
-  if (!turnstileToken) {
-    return NextResponse.json({ ok: false, error: "Missing Turnstile token" }, { status: 400 });
+  const safeName = cleanName(name);
+  if (!safeName) {
+    return NextResponse.json({ ok: false, error: "Please enter your name (must be 2 or more letters)." }, { status: 400 });
   }
+
+  const phoneParsed = normalizeUSPhone(phone);
+  if (!phoneParsed) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Please enter a valid US phone number (10 digits), e.g., (586) 884-4280.",
+      },
+      { status: 400 }
+    );
+  }
+
+  if (!turnstileToken) {
+    return NextResponse.json({ ok: false, error: "Please complete bot protection." }, { status: 400 });
+  }
+
   const okToken = await verifyTurnstile(turnstileToken);
   if (!okToken) {
-    return NextResponse.json({ ok: false, error: "Bot verification failed" }, { status: 403 });
+    return NextResponse.json(
+      { ok: false, error: "Bot verification failed. Please try again." },
+      { status: 403 }
+    );
   }
 
   // Lead time enforcement (defense-in-depth; Apps Script will also enforce).
@@ -60,6 +85,7 @@ export async function POST(req: Request) {
   if (!start.isValid) {
     return NextResponse.json({ ok: false, error: "Invalid start time" }, { status: 400 });
   }
+
   const now = DateTime.now().setZone(TZ);
   if (start.diff(now, "minutes").minutes < LEAD_TIME_MINUTES) {
     return NextResponse.json(
