@@ -21,7 +21,7 @@ export type GalleryItem = {
 
 export const SHOP = {
   name: "NG3 Barbershop",
-  url: "https://www.ng3barbershop.com",
+  url: "https://ng3barbershop.com",
   address: "45553 Mound Rd, Shelby Township, MI 48317",
   phone: "(586) 884-4280",
   maps: "https://maps.app.goo.gl/Cfv5qyijnuFYV2D6A",
