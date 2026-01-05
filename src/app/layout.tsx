@@ -3,6 +3,7 @@ import Providers from "./providers";
 import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
+import { SHOP } from "@/lib/site";
 
 const heading = Cinzel({
   subsets: ["latin"],
@@ -17,6 +18,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SHOP.url),
   title: {
     default: "NG3 Barbershop | Shelby Township",
     template: "%s | NG3 Barbershop",

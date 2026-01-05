@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "NG3 Barbershop",
     description:
       "Premium cuts. Luxury finish. Calm, high-end grooming—clean fades, sharp line-ups, and consistently refined results.",
-    url: SHOP.url,
+    url: "/",
     siteName: "NG3 Barbershop",
     images: [
       {
