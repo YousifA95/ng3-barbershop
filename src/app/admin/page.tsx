@@ -347,6 +347,52 @@ export default function AdminPage() {
     [rows, statusFilter]
   );
 
+  const doDelete = useCallback(
+    async (id: string) => {
+      const ok = window.confirm("Delete this appointment permanently? This cannot be undone.");
+      if (!ok) return;
+
+      setActingId(id);
+      setToast(null);
+
+      // Optimistic remove
+      const prev = rows;
+      setRows(rows.filter((r) => r.id !== id));
+
+      try {
+        const res = await fetch("/api/admin/appointments", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ id, op: "delete" }),
+        });
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data?.ok) {
+          setRows(prev); // rollback
+          setToast({
+            kind: "error",
+            title: "Delete failed",
+            detail: data?.error || "Please try again.",
+          });
+          setActingId(null);
+          return;
+        }
+
+        setToast({
+          kind: "success",
+          title: "Deleted",
+          detail: "Removed from the sheet.",
+        });
+      } catch {
+        setRows(prev); // rollback
+        setToast({ kind: "error", title: "Network error", detail: "Please try again." });
+      } finally {
+        setActingId(null);
+      }
+    },
+    [rows]
+  );
+
   const logoutNow = useCallback(async () => {
     try {
       await fetch("/api/admin/logout", { method: "POST", cache: "no-store" });
@@ -481,6 +527,18 @@ export default function AdminPage() {
           </div>
 
           <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10 bg-black/20">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-white/60">
+              <div className="ml-2">
+                Showing <span className="text-white/85">{filtered.length}</span> of{" "}
+                <span className="text-white/85">{rows.length}</span>
+              </div>
+
+              <div className="mr-2 text-xs text-white/45">
+                Requested: {rows.filter((r) => r.status === "Requested").length} ·{" "}
+                Confirmed: {rows.filter((r) => r.status === "Confirmed").length} ·{" "}
+                Declined: {rows.filter((r) => r.status === "Declined").length}
+              </div>
+            </div>
             <table className="min-w-[900px] w-full text-sm">
               <thead className="text-white/55 text-xs tracking-[0.18em] uppercase">
                 <tr className="border-b border-white/10">
@@ -516,35 +574,67 @@ export default function AdminPage() {
                     return (
                       <tr key={r.id} className="border-t border-white/10 hover:bg-white/[0.03]">
                         <td className="px-4 py-4 whitespace-nowrap">{fmtDT(r.startISO)}</td>
+
                         <td className="px-4 py-4">
                           <Pill status={r.status} />
                         </td>
+
                         <td className="px-4 py-4">{r.serviceName}</td>
                         <td className="px-4 py-4">{r.barberName}</td>
                         <td className="px-4 py-4">{r.requesterName}</td>
-                        <td className="px-4 py-4 whitespace-nowrap">{r.requesterPhoneNational}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-white/60">{fmtShort(r.createdAtISO)}</td>
-                        <td className="px-4 py-4 text-right">
-                          {canAct ? (
-                            <div className="inline-flex items-center gap-2">
-                              <button
-                                className="rounded-xl border border-[color:var(--gold)]/35 bg-[color:var(--gold)]/10 px-3 py-2 text-xs tracking-[0.14em] uppercase text-white transition hover:border-[color:var(--gold)]/55 disabled:opacity-60"
-                                disabled={isActing}
-                                onClick={() => doUpdate(r.id, "Confirmed")}
-                              >
-                                {isActing ? "Saving…" : "Confirm"}
-                              </button>
-                              <button
-                                className="rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs tracking-[0.14em] uppercase text-white/80 transition hover:border-white/20 disabled:opacity-60"
-                                disabled={isActing}
-                                onClick={() => doUpdate(r.id, "Declined")}
-                              >
-                                Decline
-                              </button>
-                            </div>
+
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          {r.requesterPhoneNational ? (
+                            <a
+                              href={`tel:${String(r.requesterPhoneNational).replace(/[^\d]/g, "")}`}
+                              className="text-white/85 underline decoration-white/15 underline-offset-4 hover:decoration-white/30"
+                              aria-label={`Call ${r.requesterPhoneNational}`}
+                            >
+                              {r.requesterPhoneNational}
+                            </a>
                           ) : (
-                            <span className="text-white/45 text-xs tracking-[0.14em] uppercase">—</span>
+                            <span className="text-white/45">—</span>
                           )}
+                        </td>
+
+                        <td className="px-4 py-4 whitespace-nowrap text-white/60">
+                          {fmtShort(r.createdAtISO)}
+                        </td>
+
+                        <td className="px-4 py-4 text-right">
+                          <div className="flex flex-wrap justify-end gap-2">
+                            {canAct ? (
+                              <>
+                                <button
+                                  className="rounded-xl border border-[color:var(--gold)]/35 bg-[color:var(--gold)]/10 px-3 py-2 text-xs tracking-[0.14em] uppercase text-white transition hover:border-[color:var(--gold)]/55 disabled:opacity-60"
+                                  disabled={isActing}
+                                  onClick={() => doUpdate(r.id, "Confirmed")}
+                                >
+                                  {isActing ? "Saving…" : "Confirm"}
+                                </button>
+
+                                <button
+                                  className="rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs tracking-[0.14em] uppercase text-white/80 transition hover:border-white/20 disabled:opacity-60"
+                                  disabled={isActing}
+                                  onClick={() => doUpdate(r.id, "Declined")}
+                                >
+                                  Decline
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-white/45 text-xs tracking-[0.14em] uppercase self-center">
+                                —
+                              </span>
+                            )}
+
+                            <button
+                              className="rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 text-xs tracking-[0.14em] uppercase text-red-100 transition hover:border-red-400/40 disabled:opacity-60"
+                              disabled={isActing}
+                              onClick={() => doDelete(r.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
