@@ -17,14 +17,15 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NG3 Barbershop | Shelby Township",
+  title: {
+    default: "NG3 Barbershop | Shelby Township",
+    template: "%s | NG3 Barbershop",
+  },
   description:
     "Luxury grooming experience in Shelby Township, MI. Book premium cuts and beard services.",
-
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
       { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
