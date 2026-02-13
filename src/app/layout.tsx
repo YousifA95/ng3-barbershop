@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
 import { SHOP } from "@/lib/site";
+import Script from "next/script";
 
 const heading = Cinzel({
   subsets: ["latin"],
@@ -34,11 +35,34 @@ export const metadata: Metadata = {
   },
 };
 
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const comingSoon = process.env.NEXT_PUBLIC_COMING_SOON === "true";
 
   return (
     <html lang="en" className={`${heading.variable} ${body.variable}`}>
+      <head>
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  anonymize_ip: true
+                });
+              `}
+            </Script>
+          </>
+        )}
+      </head>
+
       <body>
         <Providers>{children}</Providers>
         {comingSoon && <ComingSoonOverlay />}
