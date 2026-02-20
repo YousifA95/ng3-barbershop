@@ -68,7 +68,7 @@ export function ServicesMenu({ services }: { services: Service[] }) {
                   CORE SERVICES
                 </div>
                 <div className="mt-2 text-white/70 text-sm">
-                  Built for consistency. Finished with restraint.
+                  Modern barbering. Classic discipline.
                 </div>
               </div>
             </div>
@@ -110,8 +110,8 @@ export function ServicesMenu({ services }: { services: Service[] }) {
             {/* Rest of Core */}
             {coreRest.length > 0 && (
               <div className={signature.length > 0 ? "mt-6" : "mt-2"}>
-                <div className="text-white/60 text-xs tracking-[0.30em]">
-                  STANDARD
+                <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
+                  PREMIUM - FULL SERVICE
                 </div>
                 <div className="mt-4 divide-y divide-white/10">
                   {coreRest.map((s) => (
@@ -122,11 +122,11 @@ export function ServicesMenu({ services }: { services: Service[] }) {
                       <div className="min-w-0">
                         <div className="text-white/85 truncate">{s.name}</div>
                         <div className="mt-1 text-white/55 text-sm">
-                          {s.minutes} min
+                          {s.minutes} min - Precision haircut, detailed beard shaping, eyebrow cleanup, hot towel treatment, razor detailing, and finished styling.
                         </div>
                       </div>
 
-                      <div className="text-white/85 font-medium tabular-nums shrink-0">
+                      <div className="text-[color:var(--gold)] font-medium tabular-nums shrink-0">
                         {money(s.price)}
                       </div>
                     </div>

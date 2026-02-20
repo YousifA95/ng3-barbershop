@@ -119,7 +119,9 @@ export default function HomePage() {
             </a>
 
             <MagneticLink
-              href="/book"
+              href={SHOP.booksy}
+              target="_blank"
+              rel="noreferrer noopener"
               className="btn btn-primary px-3 py-2 text-sm md:px-5 md:py-3 md:text-base"
               ariaLabel="Book now"
             >
@@ -197,7 +199,8 @@ export default function HomePage() {
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <MagneticLink
-                href="/book"
+                href={SHOP.booksy}
+                target="_blank"
                 className="btn btn-primary"
                 ariaLabel="Book appointment"
               >
@@ -272,7 +275,8 @@ export default function HomePage() {
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <MagneticLink
-                href="/book"
+                href={SHOP.booksy}
+                target="_blank"
                 className="btn btn-primary"
                 ariaLabel="Book online"
               >
@@ -373,7 +377,7 @@ export default function HomePage() {
             </div>
           </div>
         </SectionReveal>
-
+        
         <footer className="mt-16 border-t border-white/5 pt-10 text-center text-sm text-white/55">
           <div className="text-white/70 font-[var(--font-heading)] tracking-[0.08em]">
             NG3 Barbershop · Shelby Township, MI
@@ -388,13 +392,7 @@ export default function HomePage() {
               aria-label="NG3 Barbershop on Instagram"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:border-[color:var(--gold)]/35 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
             >
-              <svg
-                viewBox="0 0 24 24"
-                width="18"
-                height="18"
-                aria-hidden="true"
-                fill="none"
-              >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none">
                 <path
                   d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z"
                   stroke="currentColor"
@@ -422,23 +420,33 @@ export default function HomePage() {
               aria-label="NG3 Barbershop on Facebook"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:border-[color:var(--gold)]/35 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
             >
-              <svg
-                viewBox="0 0 24 24"
-                width="18"
-                height="18"
-                aria-hidden="true"
-                fill="none"
-              >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none">
                 <path
                   d="M14 8.5V7.3c0-.9.6-1.3 1.3-1.3H17V3h-2.2C12.8 3 12 4.4 12 6.8V8.5H10v3h2V21h3v-9.5h2.2l.8-3H15Z"
                   fill="currentColor"
                 />
               </svg>
             </a>
+
+            {/* TikTok */}
+            <a
+              href="https://www.tiktok.com/@ng3barbershop"
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="NG3 Barbershop on TikTok"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:border-[color:var(--gold)]/35 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+                <path d="M14.5 3c.3 2 1.4 3.5 3.3 4.2.7.3 1.5.4 2.2.4v3.1c-1 0-2-.2-2.9-.6v5.8c0 3.1-2.5 5.6-5.6 5.6S6 19 6 15.9s2.5-5.6 5.6-5.6c.3 0 .6 0 .9.1v3.2a2.4 2.4 0 1 0 1.9 2.3V3h.1z" />
+              </svg>
+            </a>
           </div>
 
-          <div className="mt-4">© {new Date().getFullYear()} NG3. All rights reserved.</div>
+          <div className="mt-4">
+            © {new Date().getFullYear()} NG3. All rights reserved.
+          </div>
         </footer>
+
       </section>
       <BackToTop heroId="hero" />
     </main>
