@@ -24,6 +24,8 @@ export const SHOP = {
   url: "https://ng3barbershop.com",
   address: "45553 Mound Rd, Shelby Township, MI 48317",
   phone: "(586) 884-4280",
+  placeidDesk: "https://search.google.com/local/writereview?placeid=ChIJP99GJIbdJIgRI8p9k1ilOR0",
+  placeidMobile: "https://maps.google.com/?cid=ChIJP99GJIbdJIgRI8p9k1ilOR0",
   booksy: "https://booksy.com/en-us/825980_ng3-barbershop_barber-shop_23451_utica#ba_s=seo",
   maps: "https://maps.app.goo.gl/Cfv5qyijnuFYV2D6A",
   instagram: "https://www.instagram.com/ng3barbershop/",

@@ -65,6 +65,16 @@ function buildLocalBusinessJsonLd() {
 }
 
 export default function HomePage() {
+  const desktopReviewUrl = SHOP.placeidDesk;
+
+  const mobileReviewUrl = SHOP.placeidMobile;
+
+  const isMobile =
+    typeof window !== "undefined" &&
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const reviewUrl = isMobile ? mobileReviewUrl : desktopReviewUrl;
+
   const jsonLd = buildLocalBusinessJsonLd();
 
   return (
@@ -98,17 +108,6 @@ export default function HomePage() {
           </div>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a className="hover:text-white transition" href="#services">
-              Services
-            </a>
-            <a className="hover:text-white transition" href="#gallery">
-              Gallery
-            </a>
-            <a className="hover:text-white transition" href="#location">
-              Location
-            </a>
-          </nav>
 
           <div className="flex items-center gap-3">
             <a
@@ -138,15 +137,6 @@ export default function HomePage() {
               </summary>
 
               <div className="absolute right-0 mt-3 w-[min(86vw,320px)] rounded-2xl border border-white/10 bg-[#0b0b0c]/95 backdrop-blur p-2 shadow-[0_18px_55px_rgba(0,0,0,0.6)]">
-                <a className="menu-item" href="#services">
-                  Services
-                </a>
-                <a className="menu-item" href="#gallery">
-                  Gallery
-                </a>
-                <a className="menu-item" href="#location">
-                  Location
-                </a>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <a
                     className="btn btn-secondary w-full justify-center"
@@ -154,7 +144,7 @@ export default function HomePage() {
                   >
                     Call
                   </a>
-                  <a className="btn btn-primary w-full justify-center" href="#appointments">
+                  <a className="btn btn-primary w-full justify-center" href={SHOP.booksy} target="_blank" rel="noreferrer noopener">
                     Book
                   </a>
                 </div>
@@ -377,7 +367,58 @@ export default function HomePage() {
             </div>
           </div>
         </SectionReveal>
-        
+
+        {/* RATE US (Premium Card) */}
+        <section className="mt-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur">
+              <h3 className="font-[var(--font-heading)] text-2xl tracking-[0.12em] text-white/85">
+                Enjoyed Your Visit?
+              </h3>
+
+              <div className="mt-4 flex justify-center gap-1 text-[color:var(--gold)]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <svg
+                    key={i}
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    aria-hidden="true"
+                    fill="currentColor"
+                    className="drop-shadow-[0_0_10px_rgba(212,175,55,0.18)]"
+                  >
+                    <path d="M12 17.3 6.8 20l1-5.9L3.5 9.9l6-.9L12 3.6l2.5 5.4 6 .9-4.3 4.2 1 5.9z" />
+                  </svg>
+                ))}
+              </div>
+
+              <p className="mt-5 text-sm leading-relaxed text-white/55">
+                Your feedback helps others discover NG3 Barbershop. If you enjoyed your
+                experience, we'd appreciate a quick review on Google.
+              </p>
+
+              <div className="mt-7 flex justify-center">
+                <a
+                  href={reviewUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group inline-flex items-center justify-center rounded-full border border-white/20 bg-transparent px-8 py-3 text-sm font-[var(--font-heading)] tracking-[0.08em] text-white/80 transition hover:border-[color:var(--gold)]/45 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--gold)]/60"
+                  aria-label="Rate NG3 Barbershop on Google"
+                >
+                  Rate Us on Google
+                  <span className="ml-2 inline-block translate-x-0 transition group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </a>
+              </div>
+
+              <div className="mt-4 text-xs text-white/40">
+                Takes ~15 seconds. We read every review.
+              </div>
+            </div>
+          </div>
+        </section>
+
         <footer className="mt-16 border-t border-white/5 pt-10 text-center text-sm text-white/55">
           <div className="text-white/70 font-[var(--font-heading)] tracking-[0.08em]">
             NG3 Barbershop · Shelby Township, MI
