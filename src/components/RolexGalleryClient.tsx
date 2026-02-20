@@ -39,7 +39,8 @@ type Item = { src: string; alt: string };
 export function RolexGalleryClient({ items }: { items: Item[] }) {
   const curated = useMemo(() => items, [items]); // keep it Rolex-curated
   const featured = curated[0];
-  const rest = curated.slice(1, 9);
+  // Premium curation: fewer thumbnails, more breathing room.
+  const rest = curated.slice(1, 5);
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -79,9 +80,18 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
     if (!isOpen) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); close(); }
-      if (e.key === "ArrowRight") { e.preventDefault(); next(); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        next();
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prev();
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -130,16 +140,17 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
   return (
     <>
       <SectionReveal>
-        <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Featured */}
           <button
             type="button"
             onClick={() => open(0)}
-            className="lg:col-span-7 text-left self-start w-full"
+            className="lg:col-span-8 text-left self-start w-full"
             aria-label="Open featured image"
           >
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-              <div className="relative h-[460px] md:h-[560px]">
+              {/* Use aspect ratio instead of hard heights for an editorial fit across devices */}
+              <div className="relative aspect-[16/10]">
                 <Image
                   src={featured.src}
                   alt={featured.alt}
@@ -151,16 +162,25 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
               </div>
 
               <div className="flex items-center justify-between gap-4 px-6 py-5">
-                <div className="text-white/80 text-sm">{featured.alt}</div>
-                <div className="text-white/50 text-xs tracking-[0.22em]">
-                  NG3 · BARBERSHOP
+                <div>
+                  <div className="text-[color:var(--gold)] text-[11px] tracking-[0.34em] uppercase">
+                    Lookbook
+                  </div>
+                  <div className="mt-2 text-white/85 text-sm">{featured.alt}</div>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className="h-[1px] w-14 bg-[color:var(--gold)]/55" />
+                  <div className="text-white/55 text-xs tracking-[0.26em] uppercase">
+                    NG3
+                  </div>
                 </div>
               </div>
             </div>
           </button>
 
           {/* Thumbnails */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <div className="grid grid-cols-2 gap-5">
               {rest.map((img, idx) => {
                 const actualIndex = idx + 1; // because featured is index 0
@@ -178,13 +198,15 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
                         alt={img.alt}
                         fill
                         sizes="(max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                        className="object-cover transition duration-700 ease-out group-hover:brightness-[1.05]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0 opacity-70" />
                     </div>
 
                     <div className="absolute left-5 right-5 bottom-5 flex items-center justify-between">
-                      <div className="text-white/85 text-xs">{img.alt}</div>
+                      <div className="text-white/85 text-[11px] tracking-[0.22em] uppercase">
+                        Look {String(actualIndex + 1).padStart(2, "0")}
+                      </div>
                       <div className="h-[1px] w-10 bg-[color:var(--gold)]/60" />
                     </div>
                   </button>
@@ -192,14 +214,12 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
               })}
             </div>
 
-            <div className="mt-5 rounded-3xl border border-white/10 bg-white/5 p-6">
-              <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-                STANDARD
+            <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+              <div className="text-[color:var(--gold)] text-[11px] tracking-[0.34em] uppercase">
+                Curated
               </div>
-              <div className="mt-2 text-white/80">Fewer images. Higher confidence.</div>
-              <div className="mt-2 text-white/60 text-sm">
-                Use Arrow keys to navigate when open.
-              </div>
+              <div className="mt-2 text-white/80 text-sm">Fewer images. Higher confidence.</div>
+              <div className="mt-2 text-white/55 text-sm">Tip: Arrow keys to navigate when open.</div>
             </div>
           </div>
         </div>
@@ -239,10 +259,7 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
                 </div>
 
                 <div className="h-full w-full flex items-center justify-center px-5 pb-14 pt-16">
-                  <div
-                    className="w-full max-w-5xl"
-                    onClick={(e) => e.stopPropagation()} // clicking inside viewer should NOT close
-                  >
+                  <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
                     <div className="relative overflow-hidden rounded-3xl border border-white/12 bg-black group">
                       {/* Image area */}
                       <div className="relative aspect-[16/10]">
