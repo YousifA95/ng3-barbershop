@@ -6,7 +6,6 @@ import { RolexGalleryClient } from "@/components/RolexGalleryClient";
 import { ServicesMenu } from "@/components/ServicesMenu";
 import { MagneticLink } from "@/components/MagneticLink";
 import { GALLERY, SERVICES, SHOP } from "@/lib/site";
-import { BackToTop } from "@/components/BackToTop";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SHOP.url),
@@ -118,9 +117,7 @@ export default function HomePage() {
             </a>
 
             <MagneticLink
-              href={SHOP.booksy}
-              target="_blank"
-              rel="noreferrer noopener"
+              href="#appointments"
               className="btn btn-primary px-3 py-2 text-sm md:px-5 md:py-3 md:text-base"
               ariaLabel="Book now"
             >
@@ -129,26 +126,17 @@ export default function HomePage() {
 
             {/* Mobile menu (CSS-only, no JS) */}
             <details className="md:hidden group relative">
-              <summary className="btn btn-secondary px-3 py-2 cursor-pointer list-none">
+              <summary className="btn btn-secondary w-16 px-3 py-2 cursor-pointer list-none">
                 <span className="sr-only">Open menu</span>
                 <span aria-hidden className="text-sm text-white/80">
-                  Menu
-                </span>
-              </summary>
-
-              <div className="absolute right-0 mt-3 w-[min(86vw,320px)] rounded-2xl border border-white/10 bg-[#0b0b0c]/95 backdrop-blur p-2 shadow-[0_18px_55px_rgba(0,0,0,0.6)]">
-                <div className="mt-2 grid grid-cols-2 gap-2">
                   <a
-                    className="btn btn-secondary w-full justify-center"
                     href={`tel:${SHOP.phone.replace(/[^\d]/g, "")}`}
+                    className="text-sm text-white/80 tracking-wider"
                   >
                     Call
                   </a>
-                  <a className="btn btn-primary w-full justify-center" href={SHOP.booksy} target="_blank" rel="noreferrer noopener">
-                    Book
-                  </a>
-                </div>
-              </div>
+                </span>
+              </summary>
             </details>
           </div>
         </div>
@@ -489,7 +477,6 @@ export default function HomePage() {
         </footer>
 
       </section>
-      <BackToTop heroId="hero" />
     </main>
   );
 }

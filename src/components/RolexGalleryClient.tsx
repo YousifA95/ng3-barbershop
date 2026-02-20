@@ -219,7 +219,6 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
                 Curated
               </div>
               <div className="mt-2 text-white/80 text-sm">Fewer images. Higher confidence.</div>
-              <div className="mt-2 text-white/55 text-sm">Tip: Arrow keys to navigate when open.</div>
             </div>
           </div>
         </div>

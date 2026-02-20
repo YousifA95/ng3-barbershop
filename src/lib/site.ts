@@ -48,7 +48,7 @@ export const SERVICES: Service[] = [
   { name: "Haircut & Beard", price: 50, minutes: 30, featured: true, category: "core" },
   { name: "Haircut, Beard & Eyebrow", price: 60, minutes: 40, featured: true, category: "core" },
   { name: "Kids", price: 25, minutes: 20, featured: true, category: "core" },
-  { name: "The NG3 Ritual", price: 80, minutes: 45, category: "core" },
+  { name: "", price: 80, minutes: 45, category: "core" },
 
   // Add-ons
   { name: "Beard Line-up", price: 20, minutes: 15, category: "addon" },
@@ -67,4 +67,18 @@ export const GALLERY: GalleryItem[] = [
   { src: "/images/gallery-07.webp", alt: "Curly top with taper fade" },
   { src: "/images/gallery-08.webp", alt: "Modern textured crop fade" },
   { src: "/images/gallery-09.webp", alt: "Clean beard line-up and fade" },
+  { src: "/images/gallery-10.webp", alt: "High fade with design detail" },
+  { src: "/images/gallery-11.webp", alt: "Low fade with design detail" },
+  { src: "/images/gallery-12.webp", alt: "Pompadour fade with beard" },
+  { src: "/images/gallery-13.webp", alt: "Textured top with clean fade" },
+  { src: "/images/gallery-14.webp", alt: "Back taper fade finish" },
+  { src: "/images/gallery-15.webp", alt: "Slick back fade profile" },
+  { src: "/images/gallery-16.webp", alt: "Curly top with taper fade" },
+  { src: "/images/gallery-17.webp", alt: "Modern textured crop fade" },
+  { src: "/images/gallery-18.webp", alt: "Clean beard line-up and fade" },
+  { src: "/images/gallery-19.webp", alt: "Back taper fade finish" },
+  { src: "/images/gallery-20.webp", alt: "Slick back fade profile" },
+  { src: "/images/gallery-21.webp", alt: "Curly top with taper fade" },
+  { src: "/images/gallery-22.webp", alt: "Modern textured crop fade" },
+  { src: "/images/gallery-23.webp", alt: "Clean beard line-up and fade" },
 ];

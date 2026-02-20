@@ -111,9 +111,9 @@ export function ServicesMenu({ services }: { services: Service[] }) {
             {coreRest.length > 0 && (
               <div className={signature.length > 0 ? "mt-6" : "mt-2"}>
                 <div className="text-[color:var(--gold)] text-xs tracking-[0.30em]">
-                  PREMIUM - FULL SERVICE
+                  ELEGANCE PACKAGE
                 </div>
-                <div className="mt-4 divide-y divide-white/10">
+                <div className="mt-0 divide-y divide-white/10">
                   {coreRest.map((s) => (
                     <div
                       key={s.name}
