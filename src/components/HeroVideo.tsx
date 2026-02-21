@@ -5,13 +5,13 @@ export default function HeroVideo() {
     <section className="relative isolate min-h-[100svh] w-full overflow-hidden">
       {/* Background video */}
       <video
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         autoPlay
         muted
         loop
         playsInline
         preload="metadata"
-        poster="/images/hero-poster.jpg"
+        poster="/images/hero.webp"
         aria-hidden="true"
       >
         <source src="/videos/hero.mp4" type="video/mp4" />
@@ -24,7 +24,7 @@ export default function HeroVideo() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-center px-6 pt-24 pb-32">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-[0.28em] text-white/70">
             • Precision. Consistency. Restraint.
           </div>
@@ -42,20 +42,13 @@ export default function HeroVideo() {
             <a
               href="#services"
               aria-label="Scroll to Services"
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector("#services")?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }}
-              className="group inline-flex items-center gap-3
+              className="group inline-flex flex-col items-center
              px-8 py-4
              rounded-full
-             bg-white/5
+             bg-white/[0.02]
              backdrop-blur-sm
              transition-all duration-300
-             hover:bg-white/10
+             hover:bg-white/[0.08]
              hover:translate-y-[1px]
              focus:outline-none
              focus-visible:ring-2
@@ -75,9 +68,8 @@ export default function HeroVideo() {
                 height="16"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-white/60 transition-all duration-300
-               group-hover:text-[color:var(--gold)]
-               group-hover:translate-y-[2px]"
+                className="mt-2 text-white/60 transition-all duration-300
+               group-hover:text-[color:var(--gold)]"
                 aria-hidden="true"
               >
                 <path

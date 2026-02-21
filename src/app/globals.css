@@ -149,6 +149,7 @@ iframe {
   }
 }
 
+/* Hero Styling */
 @keyframes heroFloat {
   0%, 100% {
     transform: translateY(0);
@@ -162,4 +163,45 @@ iframe {
 
 .animate-heroFloat {
   animation: heroFloat 2.2s ease-in-out infinite;
+}
+
+/* Intro splash (premium, restrained) */
+@keyframes introLogoIn {
+  0% { transform: translateY(10px) scale(0.96); opacity: 0; filter: blur(6px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes introLineIn {
+  0% { transform: scaleX(0.3); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes introFadeOut {
+  0%, 72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.introLogo {
+  animation: introLogoIn 700ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.introWordmark {
+  animation: introLogoIn 850ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.introLine {
+  transform-origin: center;
+  animation: introLineIn 700ms ease-out 180ms forwards;
+}
+
+.introFade {
+  animation: introFadeOut 1100ms ease forwards;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .introLogo, .introWordmark, .introLine, .introFade {
+    animation: none !important;
+  }
 }

@@ -5,6 +5,7 @@ import { Cinzel, Inter } from "next/font/google";
 import { ComingSoonOverlay } from "@/components/ComingSoonOverlay";
 import { SHOP } from "@/lib/site";
 import Script from "next/script";
+import IntroSplash from "@/components/IntroSplash";
 
 const heading = Cinzel({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body>
+        <IntroSplash />
         <Providers>{children}</Providers>
         {comingSoon && <ComingSoonOverlay />}
       </body>

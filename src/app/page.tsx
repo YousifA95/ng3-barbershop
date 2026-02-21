@@ -7,6 +7,7 @@ import { ServicesMenu } from "@/components/ServicesMenu";
 import { MagneticLink } from "@/components/MagneticLink";
 import { GALLERY, SERVICES, SHOP } from "@/lib/site";
 import LogoHomeLink from "@/components/LogoHomeLink";
+import TeamSection from "@/components/TeamSection";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SHOP.url),
@@ -90,6 +91,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 backdrop-blur border-b border-white/5 bg-black/30">
         <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/* Hero */}
             <LogoHomeLink />
           </div>
 
@@ -135,6 +137,31 @@ export default function HomePage() {
       <section id="services" className="scroll-mt-24 mx-auto max-w-6xl px-5 py-16 md:py-24">
         <ServicesMenu services={SERVICES} />
       </section>
+
+      {/* Section separator (Services → Team) */}
+      <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-14 md:pb-6">
+        <div className="flex items-center gap-6">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="text-[11px] uppercase tracking-[0.38em] text-white/45">
+            The Team
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
+      </div>
+
+      {/* Team */}
+      <TeamSection />
+
+      {/* Section separator (Services → Team) */}
+      <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-28 md:pb-14">
+        <div className="flex items-center gap-6">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="text-[11px] uppercase tracking-[0.38em] text-white/45">
+            The Experience
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
+      </div>
 
       {/* GALLERY */}
       <section id="gallery" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
