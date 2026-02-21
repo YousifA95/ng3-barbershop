@@ -337,7 +337,7 @@ export default function HomePage() {
 
               <p className="mt-5 text-sm leading-relaxed text-white/55">
                 Your feedback helps others discover NG3 Barbershop. If you enjoyed your
-                experience, we'd appreciate a quick review on Google.
+                experience, we&apos;d appreciate a quick review on Google.
               </p>
 
               <div className="mt-7 flex justify-center">
