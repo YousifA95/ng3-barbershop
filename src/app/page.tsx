@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import HeroVideo from "@/components/HeroVideo";
 
 import { SectionReveal } from "@/components/SectionReveal";
 import { RolexGalleryClient } from "@/components/RolexGalleryClient";
 import { ServicesMenu } from "@/components/ServicesMenu";
 import { MagneticLink } from "@/components/MagneticLink";
 import { GALLERY, SERVICES, SHOP } from "@/lib/site";
+import LogoHomeLink from "@/components/LogoHomeLink";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SHOP.url),
@@ -89,21 +90,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 backdrop-blur border-b border-white/5 bg-black/30">
         <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image
-              src="/images/logo.webp"
-              alt="NG3 Barbershop"
-              width={38}
-              height={38}
-              className="rounded-xl border border-white/10 bg-black/30"
-            />
-            <div className="leading-tight">
-              <div className="text-white/90 font-[var(--font-heading)] tracking-[0.06em]">
-                NG3
-              </div>
-              <div className="text-white/55 text-xs tracking-[0.28em]">
-                BARBERSHOP
-              </div>
-            </div>
+            <LogoHomeLink />
           </div>
 
           {/* Desktop nav */}
@@ -142,69 +129,10 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section id="hero" className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[#0a0a0a]">
-          <div className="absolute inset-0 hero-side-fade">
-            <Image
-              src="/images/hero.webp"
-              alt="NG3 Barbershop — premium grooming"
-              fill
-              priority
-              className="object-cover object-[55%_35%]"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black" />
-          <div className="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[color:var(--gold)]/10 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl px-5 pt-20 pb-14 md:pt-28 md:pb-20">
-          <SectionReveal>
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
-              <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" />
-              Precision. Consistency. Restraint.
-            </div>
-
-            <h1 className="mt-6 font-[var(--font-heading)] text-4xl md:text-6xl leading-[1.05] text-white">
-              Premium cuts.{" "}
-              <span className="text-white/85">Luxury finish.</span>
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-white/70 leading-relaxed">
-              Calm, high-end grooming—clean fades, sharp line-ups, and
-              consistently refined results.
-            </p>
-
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <MagneticLink
-                href={SHOP.booksy}
-                target="_blank"
-                className="btn btn-primary"
-                ariaLabel="Book appointment"
-              >
-                Book Appointment
-              </MagneticLink>
-
-              <MagneticLink
-                href={SHOP.maps}
-                className="btn btn-secondary"
-                ariaLabel="Get directions"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                Get Directions
-              </MagneticLink>
-            </div>
-
-            <div className="mt-6 text-sm text-white/65">
-              Licensed • Clean tools • Consistent results
-            </div>
-          </SectionReveal>
-        </div>
-      </section>
+      <HeroVideo />
 
       {/* SERVICES */}
-      <section id="services" className="mx-auto max-w-6xl px-5 py-16 md:py-24">
+      <section id="services" className="scroll-mt-24 mx-auto max-w-6xl px-5 py-16 md:py-24">
         <ServicesMenu services={SERVICES} />
       </section>
 
