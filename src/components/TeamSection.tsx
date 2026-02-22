@@ -2,18 +2,16 @@ import Image from "next/image";
 
 type Barber = {
   name: string;
-  title: string; // e.g. "Master Barber" / "Barber"
   img: string;   // e.g. "/images/barbers/adam.jpg"
-  bio: string;
 };
 
 const BARBERS: Barber[] = [
-  { name: "Nameer", title: "Master Barber", img: "/images/barber-1.webp", bio: "Specializes in skin fades, beard detailing, and clean line-ups. 8+ years experience." },
-  { name: "Norman", title: "Senior Barber", img: "/images/barber-2.webp", bio: "Experienced in classic cuts and styling. 6+ years experience." },
-  { name: "Neno", title: "Barber", img: "/images/barber-3.webp", bio: "Specializes in precision cuts and beard grooming. 4+ years experience." },
-  { name: "Laith", title: "Barber", img: "/images/barber-4.webp", bio: "Focuses on modern styles and creative line-ups. 3+ years experience." },
-  { name: "Fadi", title: "Barber", img: "/images/barber-5.webp", bio: "Known for clean, sharp cuts and attention to detail. 5+ years experience." },
-  { name: "Tony", title: "Barber", img: "/images/barber-6.webp", bio: "Specializes in traditional cuts and classic styling. 7+ years experience." },
+  { name: "Nameer", img: "/images/barber-1.webp" },
+  { name: "Norman", img: "/images/barber-2.webp" },
+  { name: "Neno", img: "/images/barber-3.webp" },
+  { name: "Laith", img: "/images/barber-4.webp" },
+  { name: "Fadi", img: "/images/barber-5.webp" },
+  { name: "Tony", img: "/images/barber-6.webp" },
 ];
 
 function Ring() {
@@ -51,7 +49,7 @@ function BarberCard({ barber, variant }: { barber: Barber; variant?: "tl" | "tr"
         <div className="absolute inset-0 rounded-full bg-black/25" />
         <Ring />
 
-        <div className="group relative h-full w-full overflow-hidden rounded-full border border-white/10 bg-black/30">
+        <div className=" relative h-full w-full overflow-hidden rounded-full border border-white/10 bg-black/30">
           <Image
             src={barber.img}
             alt={barber.name}
@@ -62,27 +60,12 @@ function BarberCard({ barber, variant }: { barber: Barber; variant?: "tl" | "tr"
 
           {/* image vignette */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
-
-          {/* hover bio overlay */}
-          <div className="absolute inset-0 grid place-items-center px-6 text-center opacity-0 transition duration-300 group-hover:opacity-100">
-            <div className="rounded-2xl border border-white/10 bg-black/55 px-5 py-4 backdrop-blur-md">
-              <div className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--gold)]/75">
-                About
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-white/80">
-                {barber.bio}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="mt-6 text-center md:text-left">
         <div className="text-white/90 font-[var(--font-heading)] text-2xl tracking-[0.04em]">
           {barber.name}
-        </div>
-        <div className="mt-1 text-[11px] uppercase tracking-[0.28em] text-[color:var(--gold)]/80">
-          {barber.title}
         </div>
       </div>
     </div>

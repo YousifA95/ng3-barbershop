@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import HeroVideo from "@/components/HeroVideo";
 
 import { SectionReveal } from "@/components/SectionReveal";
-import { RolexGalleryClient } from "@/components/RolexGalleryClient";
+import GalleryStripClient from "@/components/GalleryStripClient";
 import { ServicesMenu } from "@/components/ServicesMenu";
 import { MagneticLink } from "@/components/MagneticLink";
 import { GALLERY, SERVICES, SHOP } from "@/lib/site";
 import LogoHomeLink from "@/components/LogoHomeLink";
 import TeamSection from "@/components/TeamSection";
+import ExpandableMap from "@/components/ExpandableMap";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SHOP.url),
@@ -179,14 +180,10 @@ export default function HomePage() {
                 with restraint.
               </p>
             </div>
-            <div className="md:col-span-7 md:text-right">
-              <div className="text-white/60 text-sm">Click to view</div>
-            </div>
           </div>
-
-          <div className="mt-8">
-            <RolexGalleryClient items={GALLERY} />
-          </div>
+          <section id="gallery" className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+            <GalleryStripClient images={GALLERY} className="mt-1" />
+          </section>
         </SectionReveal>
       </section>
 
@@ -263,6 +260,7 @@ export default function HomePage() {
 
             <div className="md:col-span-7 rounded-3xl border border-white/10 bg-white/5 p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                {/* ADDRESS */}
                 <div>
                   <div className="text-white/60 text-xs tracking-[0.30em]">
                     ADDRESS
@@ -270,19 +268,25 @@ export default function HomePage() {
                   <div className="mt-3 text-white/85">{SHOP.address}</div>
                 </div>
 
+                {/* HOURS */}
                 <div>
                   <div className="text-white/60 text-xs tracking-[0.30em]">
                     HOURS
                   </div>
                   <div className="mt-3 space-y-2 text-white/80 text-sm">
                     {SHOP.hours.map(([day, hours]) => (
-                      <div key={day} className="flex items-center justify-between gap-4">
+                      <div
+                        key={day}
+                        className="flex items-center justify-between gap-4"
+                      >
                         <span className="text-white/70">{day}</span>
                         <span className="tabular-nums">{hours}</span>
                       </div>
                     ))}
                   </div>
                 </div>
+
+                <ExpandableMap src={SHOP.embeddedMap} />
               </div>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3">

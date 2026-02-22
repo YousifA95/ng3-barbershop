@@ -3,16 +3,25 @@
 export default function HeroVideo() {
   return (
     <section className="relative isolate min-h-[100svh] w-full overflow-hidden">
-      {/* Background video */}
+      {/* Blurred background fill */}
       <video
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full object-cover scale-110 blur-xl opacity-40"
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
-        poster="/images/hero.webp"
         aria-hidden="true"
+      >
+        <source src="/videos/hero.mp4" type="video/mp4" />
+      </video>
+
+      {/* Main video */}
+      <video
+        className="absolute inset-0 h-full w-full object-contain object-center"
+        autoPlay
+        muted
+        loop
+        playsInline
       >
         <source src="/videos/hero.mp4" type="video/mp4" />
       </video>
