@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "@/components/SectionReveal";
@@ -54,27 +54,27 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
   const isOpen = openIndex !== null;
   const current = openIndex !== null ? curated[openIndex] : null;
 
-  function open(i: number) {
+  const open = useCallback((i: number) => {
     setOpenIndex(i);
-  }
+  }, []);
 
-  function close() {
+  const close = useCallback(() => {
     setOpenIndex(null);
-  }
+  }, []);
 
-  function next() {
+  const next = useCallback(() => {
     setOpenIndex((i) => {
       if (i === null) return null;
       return (i + 1) % curated.length;
     });
-  }
+  }, [curated.length]);
 
-  function prev() {
+  const prev = useCallback(() => {
     setOpenIndex((i) => {
       if (i === null) return null;
       return (i - 1 + curated.length) % curated.length;
     });
-  }
+  }, [curated.length]);
 
   // Keyboard controls + prevent background scroll while open
   useEffect(() => {
@@ -136,7 +136,7 @@ export function RolexGalleryClient({ items }: { items: Item[] }) {
       window.scrollTo(0, scrollY);
       html.style.scrollBehavior = prevHtmlScrollBehavior;
     };
-  }, [isOpen]);
+  }, [isOpen, close, next, prev]);
 
   return (
     <>
