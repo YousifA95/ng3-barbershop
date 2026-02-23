@@ -48,15 +48,6 @@ export function ServicesMenu({ services }: { services: Service[] }) {
           <p className="mt-3 text-white/70 leading-relaxed">
             Transparent pricing. Precise timing. Premium finish.
           </p>
-
-          <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6">
-            <div className="text-white/60 text-xs tracking-[0.22em]">
-              APPOINTMENT POLICY
-            </div>
-            <div className="mt-2 text-white/80 text-sm leading-relaxed">
-              Arrive 5 minutes early to preserve schedule precision.
-            </div>
-          </div>
         </div>
 
         <div className="lg:col-span-8 space-y-6">

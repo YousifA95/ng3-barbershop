@@ -49,10 +49,10 @@ export default function HeroVideo() {
           {/* Scroll cue: aligned with text */}
           <div className="mt-8 flex justify-center">
             <a
-              href="#services"
-              aria-label="Scroll to Services"
+              href="#gallery"
+              aria-label="Scroll to Gallery"
               className="group inline-flex flex-col items-center
-             px-8 py-4
+             px-12 py-6
              rounded-full
              bg-white/[0.02]
              backdrop-blur-sm
@@ -69,15 +69,15 @@ export default function HeroVideo() {
                transition
                group-hover:text-white"
               >
-                View Services
+                Explore NG3
               </span>
 
               <svg
-                width="16"
-                height="16"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="mt-2 text-white/60 transition-all duration-300
+                className="mt-4 text-white/60 transition-all duration-300
                group-hover:text-[color:var(--gold)]"
                 aria-hidden="true"
               >

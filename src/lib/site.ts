@@ -23,7 +23,6 @@ export const SHOP = {
   name: "NG3 Barbershop",
   url: "https://ng3barbershop.com",
   address: "45553 Mound Rd, Shelby Township, MI 48317",
-  embeddedMap: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2935.5367274725427!2d-83.05580512256151!3d42.628780271169184!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8824dd862446df3f%3A0x1d39a558937dca23!2sNG3!5e0!3m2!1sen!2sus!4v1771800627596!5m2!1sen!2sus",
   phone: "(586) 884-4280",
   placeidDesk: "https://search.google.com/local/writereview?placeid=ChIJP99GJIbdJIgRI8p9k1ilOR0",
   placeidMobile: "https://maps.google.com/?cid=ChIJP99GJIbdJIgRI8p9k1ilOR0",
