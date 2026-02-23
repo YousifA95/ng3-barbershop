@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import HeroVideo from "@/components/HeroVideo";
-import Image from "next/image";
 
 import { SectionReveal } from "@/components/SectionReveal";
 import GalleryStripClient from "@/components/GalleryStripClient";
