@@ -117,7 +117,7 @@ iframe {
 
   .btn-secondary {
     @apply rounded-2xl px-5 py-3 text-center transition;
-    border: 1px solid rgba(212, 175, 55, 0.35);
+    border: 1px solid rgba(54, 43, 7, 0.35);
     background: rgba(212, 175, 55, 0.10);
     color: var(--gold);
   }

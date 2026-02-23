@@ -31,6 +31,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/og.jpg"],
+  },
+
   alternates: {
     canonical: "/",
   },
@@ -133,7 +139,7 @@ export default function HomePage() {
 
       <HeroVideo />
 
-      {/* Section separator (Services → Team) */}
+      {/* Section separator (Gallery) */}
       <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-28 md:pb-14">
         <div className="flex items-center gap-6">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -167,7 +173,7 @@ export default function HomePage() {
         </SectionReveal>
       </section>
 
-      {/* Section separator (Services → Team) */}
+      {/* Section separator (Services) */}
       <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-0 md:pb-8">
         <div className="flex items-center gap-6">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -183,7 +189,7 @@ export default function HomePage() {
         <ServicesMenu services={SERVICES} />
       </section>
 
-      {/* Section separator (Services → Team) */}
+      {/* Section separator (Team) */}
       <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-14 md:pb-14">
         <div className="flex items-center gap-6">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -196,6 +202,17 @@ export default function HomePage() {
 
       {/* Team */}
       <TeamSection />
+
+      {/* Section separator (Appointments) */}
+      <div className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pt-20 md:pb-20">
+        <div className="flex items-center gap-6">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="text-[11px] uppercase tracking-[0.38em] text-white/45">
+
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
+      </div>
 
       {/* APPOINTMENTS */}
       <section id="appointments" className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
