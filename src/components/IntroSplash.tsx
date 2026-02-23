@@ -48,7 +48,7 @@ export default function IntroSplash() {
       <div className="relative flex flex-col items-center">
         <div className="introLogo relative h-20 w-20 md:h-24 md:w-24">
           <Image
-            src="/images/logo.webp"
+            src="/images/logo.png"
             alt=""
             fill
             priority

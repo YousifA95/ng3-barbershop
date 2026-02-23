@@ -18,7 +18,7 @@ export default function LogoHomeLink() {
   return (
     <Link href="/" onClick={onClick} className="flex items-center gap-3">
       <Image
-        src="/images/logo.webp"
+        src="/images/logo.png"
         alt="NG3 Barbershop"
         width={38}
         height={38}

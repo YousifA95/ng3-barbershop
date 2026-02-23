@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "NG3 Barbershop",
     images: [
       {
-        url: "/images/hero.webp",
+        url: "/images/hero.jpg",
         width: 1600,
         height: 900,
         alt: "NG3 Barbershop — premium grooming",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    images: ["/images/og.jpg"],
+    images: ["/images/hero.jpg"],
   },
 
   alternates: {
@@ -49,7 +49,8 @@ function buildLocalBusinessJsonLd() {
     name: SHOP.name,
     url: SHOP.url,
     telephone: SHOP.phone,
-    image: [`${SHOP.url}/images/hero.webp`],
+    image: [`${SHOP.url}/images/hero.jpg`],
+    logo: `${SHOP.url}/images/logo.png`,
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
