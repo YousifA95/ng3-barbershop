@@ -23,10 +23,10 @@ export const metadata: Metadata = {
     siteName: "NG3 Barbershop",
     images: [
       {
-        url: "/images/hero.jpg",
-        width: 1600,
-        height: 900,
-        alt: "NG3 Barbershop — premium grooming",
+        url: "/images/ogjpg",
+        width: 1200,
+        height: 630,
+        alt: "NG3 Barbershop — Shelby Township, MI",
       },
     ],
     locale: "en_US",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    images: ["/images/hero.jpg"],
+    images: ["/images/og.jpg"],
   },
 
   alternates: {
@@ -50,7 +50,7 @@ function buildLocalBusinessJsonLd() {
     name: SHOP.name,
     url: SHOP.url,
     telephone: SHOP.phone,
-    image: [`${SHOP.url}/images/hero.jpg`],
+    image: [`${SHOP.url}/images/og.jpg`],
     logo: `${SHOP.url}/images/logo.png`,
     priceRange: "$$",
     address: {
