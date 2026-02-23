@@ -54,10 +54,8 @@ export default function HeroVideo() {
               className="group inline-flex flex-col items-center
              px-12 py-6
              rounded-full
-             bg-white/[0.02]
-             backdrop-blur-sm
              transition-all duration-300
-             hover:bg-white/[0.08]
+             hover:bg-white/[0.04]
              hover:translate-y-[1px]
              focus:outline-none
              focus-visible:ring-2
