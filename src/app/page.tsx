@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "NG3 Barbershop",
     images: [
       {
-        url: "/images/ogjpg",
+        url: `${SHOP.url}/images/og.jpg`,
         width: 1200,
         height: 630,
         alt: "NG3 Barbershop — Shelby Township, MI",
@@ -43,7 +43,34 @@ export const metadata: Metadata = {
   },
 };
 
+const dayMap: Record<string, string> = {
+  Monday: "Mo",
+  Tuesday: "Tu",
+  Wednesday: "We",
+  Thursday: "Th",
+  Friday: "Fr",
+  Saturday: "Sa",
+  Sunday: "Su",
+};
+
+function convertTo24(time: string) {
+  const [h, period] = time.split(" ");
+  let hour = parseInt(h, 10);
+
+  if (period === "PM" && hour !== 12) hour += 12;
+  if (period === "AM" && hour === 12) hour = 0;
+
+  return `${hour.toString().padStart(2, "0")}:00`;
+}
+
 function buildLocalBusinessJsonLd() {
+  const openingHours = SHOP.hours
+    .filter(([, h]) => !h.toLowerCase().includes("closed"))
+    .map(([day, hours]) => {
+      const [start, end] = hours.split(" – ");
+
+      return `${dayMap[day]} ${convertTo24(start)}-${convertTo24(end)}`;
+    });
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -61,14 +88,7 @@ function buildLocalBusinessJsonLd() {
       postalCode: "48317",
       addressCountry: "US",
     },
-    openingHours: [
-      "Tu 11:00-20:30",
-      "We 11:00-20:30",
-      "Th 11:00-20:30",
-      "Fr 11:00-20:30",
-      "Sa 11:00-20:30",
-      "Su 11:00-18:00",
-    ],
+    openingHours,
     sameAs: [SHOP.instagram],
   };
 }
@@ -93,16 +113,6 @@ export default function HomePage() {
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      {/* Primary SEO image hint (hidden) */}
-      <Image
-        src="/images/hero.jpg"
-        alt="NG3 Barbershop"
-        width={1200}
-        height={630}
-        priority
-        className="hidden"
       />
 
       {/* Header */}
