@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import HeroVideo from "@/components/HeroVideo";
+import Image from "next/image";
 
 import { SectionReveal } from "@/components/SectionReveal";
 import GalleryStripClient from "@/components/GalleryStripClient";
@@ -92,6 +93,16 @@ export default function HomePage() {
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Primary SEO image hint (hidden) */}
+      <Image
+        src="/images/hero.jpg"
+        alt="NG3 Barbershop"
+        width={1200}
+        height={630}
+        priority
+        className="hidden"
       />
 
       {/* Header */}
