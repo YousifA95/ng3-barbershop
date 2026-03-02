@@ -68,7 +68,7 @@ function BarberCard({
       style={{ transitionDelay: `${delayMs}ms` }}
     >
       {/* smaller circles (adjusted down from 230/260) */}
-      <div className="relative mx-auto h-[180px] w-[180px] md:h-[210px] md:w-[210px]">
+      <div className="relative mx-auto h-[110px] w-[110px] sm:h-[130px] sm:w-[130px] md:h-[210px] md:w-[210px]">
         <div className="absolute inset-0 rounded-full bg-black/25" />
         <Ring />
 
@@ -168,8 +168,8 @@ export default function TeamSection() {
         </div>
       </div>
 
-      {/* 3 columns on desktop */}
-      <div className="mt-12 grid gap-12 md:mt-16 md:grid-cols-3 md:gap-x-10 md:gap-y-14">
+      {/* 3 columns on mobile + desktop */}
+      <div className="mt-12 grid grid-cols-3 gap-6 md:mt-16 md:grid-cols-3 md:gap-x-10 md:gap-y-14">
         {BARBERS.map((barber, i) => (
           <BarberCard
             key={barber.name}
